@@ -27,6 +27,12 @@
         <p class="splash-subhead">
           {{ site_description }}
         </p>
+        <p>
+          <ul>
+            <li class="splash-subhead">主要網址 <span class="badge badge-success">IPv6/IPv4</span>：mc8.yuaner.tw</li>
+            <li class="splash-subhead">備用網址 <span class="badge badge-dark">IPv4</span>：mc8-4.yuaner.tw</li>
+          </ul>
+        </p>
         <ul class="list-inline mb-0">
           <li class="list-inline-item">
             <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button">
@@ -78,7 +84,7 @@
   {# 外層容器結構由 home.twig 自行管理，方便彈性排版 #}
   <div id="home-content" class="container py-5">
     <div class="row justify-content-center">
-      <div class="col-lg-10">
+      <div class="col-lg">
         <article class="markdown-body p-4 bg-white rounded shadow-sm">
           {# 支援方式一：直接在 Twig HTML 內混合撰寫 Markdown 內容 #}
           {% apply markdown %}

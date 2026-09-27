@@ -1,0 +1,24 @@
+<div id="footer-wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-2">
+        {{ trans('index.introduction', {sitename: site_name}) }}
+      </div>
+      <div class="col-lg-4"></div>
+      <div class="col-lg-2 d-flex justify-content-center align-items-center">
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <a href="{{ url('auth/register') }}" class="main-button">
+              {{ trans('index.start') }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="copyright" class="with-intro">
+  <div class="container">
+    {{ include('shared.copyright') }}
+  </div>
+</div>

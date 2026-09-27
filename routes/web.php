@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('', 'HomeController@index')->name('home');
+Route::get('page/{slug}', 'HomeController@page')->name('page')->where('slug', '[a-zA-Z0-9_\-\/]+');
+Route::get('pages/{slug}', 'HomeController@page')->name('pages')->where('slug', '[a-zA-Z0-9_\-\/]+');
 
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::middleware('guest')->group(function () {

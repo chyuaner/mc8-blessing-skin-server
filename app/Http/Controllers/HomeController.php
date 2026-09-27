@@ -17,6 +17,30 @@ class HomeController extends Controller
             ->with('home_pic_url', option('home_pic_url') ?: config('options.home_pic_url'));
     }
 
+    public function page(string $slug)
+    {
+        $slug = trim($slug, '/');
+        if (str_contains($slug, '..')) {
+            abort(404);
+        }
+
+        $file = resource_path("markdown/{$slug}.md");
+        if (!file_exists($file) || !is_file($file)) {
+            abort(404);
+        }
+
+        $content = file_get_contents($file);
+        $title = ucfirst(str_replace(['-', '_', '/'], ' ', basename($slug)));
+
+        if (preg_match('/^#\s+(.+)$/m', $content, $matches)) {
+            $title = trim($matches[1]);
+        }
+
+        return view('front.page')
+            ->with('page_title', $title)
+            ->with('markdown_file_name', $slug);
+    }
+
     public function apiRoot()
     {
         $copyright = Arr::get(

@@ -2,10 +2,12 @@ import { getExtraData } from './extra'
 
 export function scrollHander() {
   const header = document.querySelector('.navbar')
+  const hero = document.querySelector('.hp-wrapper')
   /* istanbul ignore else */
   if (header) {
     window.addEventListener('scroll', () => {
-      if (window.scrollY >= (window.innerHeight * 2) / 3) {
+      const threshold = hero ? Math.max(hero.clientHeight - 80, 50) : 100
+      if (window.scrollY >= threshold) {
         header.classList.remove('transparent')
       } else {
         header.classList.add('transparent')

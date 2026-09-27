@@ -1,147 +1,68 @@
-<!DOCTYPE html>
-<html lang="{{ locale }}">
-  <head>
-    {{ include('shared.head') }}
-    <link rel="preload" as="image" href="{{ home_pic_url }}">
-    <title>{{ site_name }}</title>
-    <style>
-      .hp-wrapper {
-        {% if fixed_bg %}
-          background-color: rgba(0, 0, 0, 0);
-        {% else %}
-          background-image: url('{{ home_pic_url }}');
-        {% endif %}
-      }
-    </style>
-    {{ include('assets.home-css', ignore_missing = true) }}
-  </head>
+{% extends 'front.base' %}
 
-  <body class="hold-transition layout-top-nav">
-    <div class="hp-wrapper">
-      {% if fixed_bg %}
-        <div id="fixed-bg" style="background-image: url('{{ home_pic_url }}')"></div>
+{% block hero_actions %}
+  <ul class="list-inline mb-0">
+    <li class="list-inline-item">
+      <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button">
+        客戶端下載
+      </a>
+    </li>
+    <li class="list-inline-item">
+      {% if auth_check() %}
+        <a href="{{ url('user') }}" class="main-button">
+          {{ trans('general.user-center') }}
+        </a>
+      {% else %}
+        <a href="{{ url('auth/register') }}" class="main-button">
+          {{ trans('general.register') }}
+        </a>
       {% endif %}
+    </li>
+  </ul>
+{% endblock %}
 
-      <nav class="navbar navbar-expand fixed-top navbar-{{ navbar_color }} navbar-{{ color_mode }}
-        ml-0 {{ transparent_navbar ? 'transparent' }}"
-      >
-        <div class="container">
-          <div class="navbar-header">
-            <a href="{{ url('/') }}" class="navbar-brand">{{ site_name }}</a>
-          </div>
-
-          <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" target="_blank" href="https://mc8-map.yuaner.tw">地圖</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" target="_blank" href="https://mc8-track.yuaner.tw">鐵路路網</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" target="_blank" href="https://mc8-chat.yuaner.tw">Web Chat</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" target="_blank" href="t.me/yuaner_mc8">Telegram群組</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url('skinlib') }}">{{ trans('general.skinlib') }}</a>
-              </li>
-
-              {{ include('shared.languages') }}
-
-              {% if auth_check() %}
-                {{ include('shared.user-menu') }}
-              {% else %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url('auth/login') }}">
-                    <i class="icon fas fa-sign-in-alt"></i>
-                    {{ trans('general.login') }}
-                  </a>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-        </div>
-      </nav>
-
+{% block content %}
+  {% if not hide_intro %}
+    <div id="intro">
       <div class="container">
-        <div class="splash">
-          <h1 class="splash-head">{{ site_name }}</h1>
-          <p class="splash-subhead">
-            {{ site_description }}
-          </p>
-          <p>
-            {% if auth_check() %}
-              <a href="{{ url('user') }}" class="main-button">
-                {{ trans('general.user-center') }}
-              </a>
-            {% else %}
-              <a href="{{ url('auth/register') }}" class="main-button">
-                {{ trans('general.register') }}
-              </a>
-            {% endif %}
-          </p>
-        </div>
-      </div>
-
-      {% if hide_intro %}
-        <div id="copyright" class="without-intro">
-          <div class="container">
-            {{ include('shared.copyright') }}
-          </div>
-        </div>
-      {% endif %}
-    </div>
-
-    {% if not hide_intro %}
-      <div id="intro">
-        <div class="container">
-          <div class="text-center">
-            <h1>{{ trans('index.features.title') }}</h1>
-            <br>
-            <br>
-            <div class="container-lg">
-              <div class="row">
-                {% for item in ['first', 'second', 'third'] %}
-                  <div class="col-lg">
-                    <i class="fas {{ trans("index.features.#{item}.icon") }} mb-3" aria-hidden="true"></i>
-                    <h3>{{ trans("index.features.#{item}.name") }}</h3>
-                    <p>{{ trans("index.features.#{item}.desc")|raw }}</p>
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
+        <div class="text-center">
+          <h1>{{ trans('index.features.title') }}</h1>
           <br>
-        </div>
-      </div>
-      <div id="footer-wrap">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-6 mb-2">
-              {{ trans('index.introduction', {sitename: site_name}) }}
-            </div>
-            <div class="col-lg-4"></div>
-            <div class="col-lg-2 d-flex justify-content-center align-items-center">
-              <a href="{{ url('auth/register') }}" class="main-button">
-                {{ trans('index.start') }}
-              </a>
+          <br>
+          <div class="container-lg">
+            <div class="row">
+              {% for item in ['first', 'second', 'third'] %}
+                <div class="col-lg">
+                  <i class="fas {{ trans("index.features.#{item}.icon") }} mb-3" aria-hidden="true"></i>
+                  <h3>{{ trans("index.features.#{item}.name") }}</h3>
+                  <p>{{ trans("index.features.#{item}.desc")|raw }}</p>
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>
+        <br>
       </div>
-      <div id="copyright" class="with-intro">
-        <div class="container">
-          {{ include('shared.copyright') }}
-        </div>
-      </div>
-    {% endif %}
+    </div>
+  {% endif %}
 
-    <script type="application/json" id="blessing-extra">
-      {{ {transparent_navbar: transparent_navbar}|json_encode|raw }}
-    </script>
-    {{ include('assets.home', ignore_missing = true) }}
-    {{ include('shared.foot') }}
-  </body>
-</html>
+  {# 外層容器結構由 home.twig 自行管理，方便彈性排版 #}
+  <div id="home-content" class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <article class="markdown-body p-4 bg-white rounded shadow-sm">
+          {# 支援方式一：直接在 Twig HTML 內混合撰寫 Markdown 內容 #}
+          {% apply markdown %}
+            ## 伺服器公告 (Twig 內嵌 Markdown 範例)
+            您可以在此直接以 **Markdown 語法** 與外層 **Bootstrap HTML 結構** 混合編修，排版自由度更高！
+          {% endapply %}
+
+          <hr>
+
+          {# 支援方式二：載入獨立 .md 檔案（markdown_file 僅輸出內層純內容，不干預外層 container） #}
+          {{ markdown_file('home.md') }}
+        </article>
+      </div>
+    </div>
+  </div>
+{% endblock %}

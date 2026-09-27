@@ -73,3 +73,61 @@ if (!function_exists('option_localized')) {
         return option($key.'_'.config('app.locale'), option($key, $default), $raw);
     }
 }
+
+if (!function_exists('markdown')) {
+    function markdown(?string $text = null, array $options = []): string
+    {
+        if ($text === null || $text === '') {
+            return '';
+        }
+
+        // Dedent: strip common leading whitespace from multiline strings (e.g. from Twig {% apply markdown %})
+        $lines = explode("\n", $text);
+        $minIndent = null;
+        foreach ($lines as $line) {
+            if (trim($line) === '') {
+                continue;
+            }
+            preg_match('/^[ \t]*/', $line, $matches);
+            $indent = strlen($matches[0]);
+            if ($minIndent === null || $indent < $minIndent) {
+                $minIndent = $indent;
+            }
+        }
+
+        if ($minIndent !== null && $minIndent > 0) {
+            foreach ($lines as $i => $line) {
+                if (trim($line) !== '') {
+                    $lines[$i] = substr($line, $minIndent);
+                }
+            }
+            $text = implode("\n", $lines);
+        }
+
+        return \Illuminate\Support\Str::markdown(trim($text), $options);
+    }
+}
+
+if (!function_exists('markdown_file')) {
+    function markdown_file(string $path, array $options = []): string
+    {
+        $candidates = [
+            resource_path('markdown/'.$path),
+            resource_path('markdown/'.$path.'.md'),
+            resource_path('content/'.$path),
+            resource_path('content/'.$path.'.md'),
+            resource_path('views/'.$path),
+            resource_path('views/'.$path.'.md'),
+            base_path($path),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (file_exists($candidate) && is_file($candidate)) {
+                return markdown(file_get_contents($candidate), $options);
+            }
+        }
+
+        return '';
+    }
+}
+

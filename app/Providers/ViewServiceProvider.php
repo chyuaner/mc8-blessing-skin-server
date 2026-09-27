@@ -12,6 +12,7 @@ class ViewServiceProvider extends ServiceProvider
     {
         View::composer([
             'home',
+            'front.*',
             '*.base',
             '*.master',
             'shared.header',
@@ -20,10 +21,15 @@ class ViewServiceProvider extends ServiceProvider
             $color = option('navbar_color');
             $view->with([
                 'site_name' => option_localized('site_name'),
+                'site_description' => option_localized('site_description'),
                 'navbar_color' => $color,
                 'color_mode' => in_array($color, $lightColors) ? 'light' : 'dark',
                 'dark_mode' => (bool) optional(auth()->user())->is_dark_mode,
                 'locale' => str_replace('_', '-', app()->getLocale()),
+                'transparent_navbar' => (bool) option('transparent_navbar', false),
+                'fixed_bg' => option('fixed_bg'),
+                'hide_intro' => option('hide_intro'),
+                'home_pic_url' => option('home_pic_url') ?: config('options.home_pic_url'),
             ]);
         });
 

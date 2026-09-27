@@ -188,6 +188,14 @@ return [
             'head',
             'last',
             'mix',
+            'markdown' => [
+                'is_safe' => ['html'],
+                'callback' => 'markdown',
+            ],
+            'markdown_file' => [
+                'is_safe' => ['html'],
+                'callback' => 'markdown_file',
+            ],
         ],
 
         /*
@@ -220,6 +228,10 @@ return [
         */
         'filters' => [
             'get' => 'data_get',
+            'markdown' => [
+                'is_safe' => ['html'],
+                'callback' => 'markdown',
+            ],
         ],
     ],
 ];

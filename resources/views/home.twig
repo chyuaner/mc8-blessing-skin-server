@@ -28,6 +28,9 @@
           {{ site_description }}
         </p>
         <p>
+          <img src="https://mc8-api.yuaner.tw/banner/mc8">
+        </p>
+        <p>
           <ul>
             <li class="splash-subhead">主要網址 <span class="badge badge-success">IPv6/IPv4</span>：mc8.yuaner.tw</li>
             <li class="splash-subhead">備用網址 <span class="badge badge-dark">IPv4</span>：mc8-4.yuaner.tw</li>
@@ -57,6 +60,51 @@
 {% endblock %}
 
 {% block content %}
+
+  <div id="important" class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <article class="markdown-body p-4 bg-white rounded shadow-sm">
+          {% apply markdown %}
+            ## 主機資訊
+            * 名稱： 8服 重度機械症 Mechanomania
+            * 類型：MC Java 版伺服器
+            * 遊戲版本：1.21.1
+            * 模組服：Neoforge
+            * 種子碼：
+            * 驗證方式：正版自動登入 + 離線密碼登入
+            * 執行狀態：執行中
+            * 玩家數：0 / 20
+          {% endapply %}
+        </article>
+      </div>
+
+      <div class="col-lg-6">
+        <article class="markdown-body p-4 bg-white rounded shadow-sm">
+          <h2>重要公告</h2>
+        </article>
+        <article class="markdown-body p-4 bg-white rounded shadow-sm">
+          <h2>常用連結</h2>
+          {% apply markdown %}
+          * [常用指令]({{ url('page/commands') }})
+          * [主地圖](https://mc8-map.yuaner.tw)
+          * [軌道配置圖](https://mc8-track.yuaner.tw)
+          * [網頁版遊戲內聊天室](https://mc8-chat.yuaner.tw)
+          {% if auth_check() %}
+           <li><a href="{{ url('user') }}">
+              {{ trans('general.user-center') }}
+              </a></li>
+          {% else %}
+            <li><a href="{{ url('auth/register') }}">
+              {{ trans('general.register') }}
+           </a></li>
+          {% endif %}
+          {% endapply %}
+        </article>
+      </div>
+    </div>
+  </div>
+
   {% if not hide_intro %}
     <div id="intro">
       <div class="container">

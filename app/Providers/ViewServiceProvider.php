@@ -32,6 +32,8 @@ class ViewServiceProvider extends ServiceProvider
                 'hide_intro' => option('hide_intro'),
                 'home_pic_url' => option('home_pic_url') ?: config('options.home_pic_url'),
                 'is_home' => false,
+                'announcement' => !empty(trim(option_localized('announcement') ?? '')) ? markdown(option_localized('announcement')) : '',
+                'has_announcement' => !empty(trim(option_localized('announcement') ?? '')),
             ]);
         });
 

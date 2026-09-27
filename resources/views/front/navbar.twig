@@ -1,18 +1,19 @@
-<nav class="navbar navbar-expand fixed-top navbar-{{ navbar_color }} navbar-{{ color_mode }}
+<nav class="navbar navbar-expand-lg fixed-top navbar-{{ navbar_color }} navbar-{{ color_mode }}
   ml-0 {{ (transparent_navbar and is_home) ? 'transparent' }}"
 >
   <div class="container">
-    <div class="navbar-header">
-      <a href="{{ url('/') }}" class="navbar-brand">{{ site_name }}</a>
-    </div>
+    <a href="{{ url('/') }}" class="navbar-brand text-truncate mr-auto mr-lg-3">{{ site_name }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <div class="navbar-custom-menu">
-      <ul class="nav navbar-nav">
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInfo" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             簡介和玩法說明
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
             <li><a class="dropdown-item" href="{{ url('home') }}">重要公告</a></li>
             <li><a class="dropdown-item" href="{{ url('page/commands') }}">常用指令</a></li>
             <li><a class="dropdown-item" href="{{ url('page/download') }}">下載與安裝教學</a></li>
@@ -23,30 +24,30 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMap" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             地圖
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMap">
             <a class="dropdown-item" target="_blank" href="https://mc8-map.yuaner.tw">主地圖</a>
             <a class="dropdown-item" target="_blank" href="https://mc8-track.yuaner.tw">軌道配置圖</a>
             <a class="dropdown-item" target="_blank" href="https://www.chunkbase.com/apps/seed-map#seed=-7847616021550295000&platform=java_1_21&dimension=overworld&x=8591&z=-11051&zoom=0.584">Chunkbase <span class="badge badge-pill badge-secondary">外部服務</span></a>
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownChat" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             聊天群
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownChat">
             <a class="dropdown-item" target="_blank" href="https://mc8-chat.yuaner.tw">網頁版聊天 <span class="badge badge-pill badge-success">與遊戲內連動</span></a>
             <a class="dropdown-item" target="_blank" href="https://t.me/yuaner_mc8">Telegram群組 <span class="badge badge-pill badge-success">與遊戲內連動</span></a>
             <a class="dropdown-item" target="_blank" href="#">QQ群聊</a>
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDev" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             開發
           </a>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownDev">
             <li><a class="dropdown-item" target="_blank" href="https://mc8-api.yuaner.tw">API服務</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{{ url('page/mods_dev') }}">自行開發/魔改的模組</a></li>
@@ -63,9 +64,9 @@
         {% if auth_check() %}
           {{ include('shared.user-menu') }}
         {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url('auth/login') }}">
-              <i class="icon fas fa-sign-in-alt"></i>
+          <li class="nav-item ml-lg-2">
+            <a class="nav-link nav-btn-login" href="{{ url('auth/login') }}">
+              <i class="icon fas fa-sign-in-alt mr-1"></i>
               {{ trans('general.login') }}
             </a>
           </li>

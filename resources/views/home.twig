@@ -24,36 +24,50 @@
     <div class="container">
       <div class="splash">
         <h1 class="splash-head">{{ site_name }}</h1>
-        <p class="splash-subhead">
+        <p class="splash-subhead mb-3">
           {{ site_description }}
         </p>
-        <p>
-          <img src="https://mc8-api.yuaner.tw/banner/mc8">
-        </p>
-        <p>
-          <ul>
-            <li class="splash-subhead">主要網址 <span class="badge badge-success">IPv6/IPv4</span>：mc8.yuaner.tw</li>
-            <li class="splash-subhead">備用網址 <span class="badge badge-dark">IPv4</span>：mc8-4.yuaner.tw</li>
-          </ul>
-        </p>
-        <ul class="list-inline mb-0">
+
+        <div class="server-status-banner mb-3">
+          <img src="https://mc8-api.yuaner.tw/banner/mc8" class="img-fluid rounded shadow-sm" alt="伺服器即時狀態" style="max-height: 80px;">
+        </div>
+
+        <div class="server-ip-badges mb-4">
+          <div class="server-ip-box d-inline-flex flex-wrap justify-content-center align-items-center py-2 px-3 rounded-pill">
+            <span class="server-ip-badge-item text-white mr-sm-3 mr-2 mb-1 mb-sm-0">
+              <i class="fas fa-network-wired text-success mr-1"></i>主要網址 <span class="badge badge-success">IPv6 / IPv4</span>：<code>mc8.yuaner.tw</code>
+            </span>
+            <span class="server-ip-badge-item ip-backup text-white">
+              <i class="fas fa-server text-info mr-1"></i>備用網址 <span class="badge badge-secondary">IPv4</span>：<code>mc8-4.yuaner.tw</code>
+            </span>
+          </div>
+        </div>
+
+        <ul class="list-inline mb-2">
           <li class="list-inline-item">
-            <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button">
-              客戶端下載
+            <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button main-button-download">
+              <i class="fas fa-download mr-1"></i>客戶端下載
             </a>
           </li>
           <li class="list-inline-item">
             {% if auth_check() %}
               <a href="{{ url('user') }}" class="main-button">
-                {{ trans('general.user-center') }}
+                <i class="fas fa-user-circle mr-1"></i>{{ trans('general.user-center') }}
               </a>
             {% else %}
-              <a href="{{ url('auth/register') }}" class="main-button">
-                {{ trans('general.register') }}
+              <a href="{{ url('auth/register') }}" class="main-button main-button-register">
+                <i class="fas fa-user-plus mr-1"></i>{{ trans('general.register') }}
               </a>
             {% endif %}
           </li>
         </ul>
+
+        <div class="account-sync-hint mt-2">
+          <div class="hint-pill">
+            <i class="fas fa-shield-alt text-warning mr-1"></i>
+            <span><strong>帳號共用提醒：</strong>在此註冊之帳號密碼將同步連動遊戲內登入（<code>/login</code>），無須重複註冊。</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -62,44 +76,90 @@
 {% block content %}
 
   <div id="important" class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-6">
-        <article class="markdown-body p-4 bg-white rounded shadow-sm">
+    <div class="row">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <article class="markdown-body p-4 bg-white rounded shadow-sm h-100 border">
           {% apply markdown %}
-            ## 主機資訊
-            * 名稱： 8服 重度機械症 Mechanomania
-            * 類型：MC Java 版伺服器
-            * 遊戲版本：1.21.1
-            * 模組服：Neoforge
-            * 種子碼：
-            * 驗證方式：正版自動登入 + 離線密碼登入
-            * 執行狀態：執行中
-            * 玩家數：0 / 20
+            ## 🖥️ 主機資訊
+            * **名稱**：8服 重度機械症 Mechanomania
+            * **類型**：Minecraft Java 版伺服器
+            * **遊戲版本**：1.21.1
+            * **模組架構**：NeoForge
+            * **驗證方式**：正版自動登入 + 離線密碼登入
+            * **連線網址**：`mc8.yuaner.tw` / `mc8-4.yuaner.tw`
+            * **執行狀態**：🟢 正常運作中
+            * **最大玩家數**：20 人
           {% endapply %}
         </article>
       </div>
 
       <div class="col-lg-6">
-        <article class="markdown-body p-4 bg-white rounded shadow-sm">
-          <h2>重要公告</h2>
-        </article>
-        <article class="markdown-body p-4 bg-white rounded shadow-sm">
-          <h2>常用連結</h2>
-          {% apply markdown %}
-          * [常用指令]({{ url('page/commands') }})
-          * [主地圖](https://mc8-map.yuaner.tw)
-          * [軌道配置圖](https://mc8-track.yuaner.tw)
-          * [網頁版遊戲內聊天室](https://mc8-chat.yuaner.tw)
-          {% if auth_check() %}
-           <li><a href="{{ url('user') }}">
-              {{ trans('general.user-center') }}
-              </a></li>
+        {# 重要公告區塊：連動 Blessing Skin 系統公告 #}
+        <article class="markdown-body p-4 bg-white rounded shadow-sm mb-4 border">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <h2 class="m-0 border-0 p-0 text-primary">
+              <i class="fas fa-bullhorn mr-2"></i>重要公告
+            </h2>
+            <span class="badge badge-primary px-2 py-1">系統連動</span>
+          </div>
+
+          {% if has_announcement %}
+            <div class="announcement-content">
+              {{ announcement|raw }}
+            </div>
           {% else %}
-            <li><a href="{{ url('auth/register') }}">
-              {{ trans('general.register') }}
-           </a></li>
+            <div class="text-center text-muted py-4">
+              <i class="fas fa-bell-slash fa-2x mb-2 text-black-50 d-block"></i>
+              <p class="m-0">目前沒有公告</p>
+            </div>
           {% endif %}
-          {% endapply %}
+        </article>
+
+        {# 常用連結 #}
+        <article class="markdown-body p-4 bg-white rounded shadow-sm border">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <h2 class="m-0 border-0 p-0">
+              <i class="fas fa-compass mr-2 text-info"></i>常用連結
+            </h2>
+          </div>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <a href="{{ url('page/commands') }}" class="btn btn-sm btn-outline-primary mr-1">
+                <i class="fas fa-terminal mr-1"></i>常用指令手冊
+              </a>
+              <span class="text-muted small">查看 /login、/tpa、/flan 領地等語法</span>
+            </li>
+            <li class="mb-2">
+              <a href="https://mc8-map.yuaner.tw" target="_blank" class="btn btn-sm btn-outline-success mr-1">
+                <i class="fas fa-map-marked-alt mr-1"></i>3D 衛星主地圖
+              </a>
+              <span class="text-muted small">即時查看玩家位置與領地標記</span>
+            </li>
+            <li class="mb-2">
+              <a href="https://mc8-track.yuaner.tw" target="_blank" class="btn btn-sm btn-outline-info mr-1">
+                <i class="fas fa-subway mr-1"></i>軌道配置圖
+              </a>
+              <span class="text-muted small">全服鐵道路線與站點時刻表</span>
+            </li>
+            <li class="mb-2">
+              <a href="https://mc8-chat.yuaner.tw" target="_blank" class="btn btn-sm btn-outline-warning mr-1">
+                <i class="fas fa-comments mr-1"></i>網頁版遊戲聊天室
+              </a>
+              <span class="badge badge-success">雙向即時連動</span>
+            </li>
+            <li class="mt-3 pt-2 border-top">
+              {% if auth_check() %}
+                <a href="{{ url('user') }}" class="btn btn-sm btn-secondary">
+                  <i class="fas fa-user mr-1"></i>{{ trans('general.user-center') }}
+                </a>
+              {% else %}
+                <a href="{{ url('auth/register') }}" class="btn btn-sm btn-success">
+                  <i class="fas fa-user-plus mr-1"></i>{{ trans('general.register') }}
+                </a>
+                <small class="text-muted ml-2">※ 遊戲帳號密碼完全同步共用</small>
+              {% endif %}
+            </li>
+          </ul>
         </article>
       </div>
     </div>

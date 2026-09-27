@@ -133,6 +133,10 @@ body {
   background-color: #fff;
 }
 
+body:not(.is-home) .front-content {
+  padding-top: 75px;
+}
+
 .markdown-body {
   font-size: 16px;
   line-height: 1.7;

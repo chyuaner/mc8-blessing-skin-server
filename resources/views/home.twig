@@ -1,24 +1,53 @@
 {% extends 'front.base' %}
 
-{% block hero_actions %}
-  <ul class="list-inline mb-0">
-    <li class="list-inline-item">
-      <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button">
-        客戶端下載
-      </a>
-    </li>
-    <li class="list-inline-item">
-      {% if auth_check() %}
-        <a href="{{ url('user') }}" class="main-button">
-          {{ trans('general.user-center') }}
-        </a>
+{% block body_class %}is-home{% endblock %}
+
+{% block style %}
+  <link rel="preload" as="image" href="{{ home_pic_url }}">
+  <style>
+    .hp-wrapper {
+      {% if fixed_bg %}
+        background-color: rgba(0, 0, 0, 0);
       {% else %}
-        <a href="{{ url('auth/register') }}" class="main-button">
-          {{ trans('general.register') }}
-        </a>
+        background-image: url('{{ home_pic_url }}');
       {% endif %}
-    </li>
-  </ul>
+    }
+  </style>
+{% endblock %}
+
+{% block hero %}
+  <div class="hp-wrapper">
+    {% if fixed_bg %}
+      <div id="fixed-bg" style="background-image: url('{{ home_pic_url }}')"></div>
+    {% endif %}
+
+    <div class="container">
+      <div class="splash">
+        <h1 class="splash-head">{{ site_name }}</h1>
+        <p class="splash-subhead">
+          {{ site_description }}
+        </p>
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button">
+              客戶端下載
+            </a>
+          </li>
+          <li class="list-inline-item">
+            {% if auth_check() %}
+              <a href="{{ url('user') }}" class="main-button">
+                {{ trans('general.user-center') }}
+              </a>
+            {% else %}
+              <a href="{{ url('auth/register') }}" class="main-button">
+                {{ trans('general.register') }}
+              </a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block content %}

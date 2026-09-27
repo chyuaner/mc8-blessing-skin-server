@@ -1,0 +1,38 @@
+{% extends 'front.base' %}
+
+{% block title %}客戶端下載專區 - {{ site_name }}{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body p-4">
+            <h3 class="card-title font-weight-bold">📥 官方整合包下載</h3>
+            <p class="card-text text-muted">
+              內含沉浸式鐵路、重度機械症科技模組以及專屬皮膚載入外掛。
+            </p>
+            <ul class="list-inline mb-0">
+              <li class="list-inline-item">
+                <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="btn btn-primary btn-lg" target="_blank">
+                  直接下載整合包
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {# 混合撰寫 Markdown 安裝指南 #}
+        <article class="markdown-body p-4 bg-white rounded shadow-sm border">
+          {% apply markdown %}
+            ### 🛠️ 安裝步驟指引
+            1. 下載上方整合包並解壓縮至任意目錄。
+            2. 使用支援 Java 17+ 的啟動器（如 PCL2、HMCL、MultiMC）匯入。
+            3. 分配至少 **4GB (4096MB)** 記憶體以確保流暢運作。
+            4. 啟動遊戲並點選連線進入伺服器！
+          {% endapply %}
+        </article>
+      </div>
+    </div>
+  </div>
+{% endblock %}

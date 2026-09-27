@@ -12,6 +12,7 @@ class ViewServiceProvider extends ServiceProvider
     {
         View::composer([
             'home',
+            'mdpage',
             'front.*',
             '*.base',
             '*.master',
@@ -30,6 +31,7 @@ class ViewServiceProvider extends ServiceProvider
                 'fixed_bg' => option('fixed_bg'),
                 'hide_intro' => option('hide_intro'),
                 'home_pic_url' => option('home_pic_url') ?: config('options.home_pic_url'),
+                'is_home' => false,
             ]);
         });
 

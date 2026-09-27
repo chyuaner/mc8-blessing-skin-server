@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand fixed-top navbar-{{ navbar_color }} navbar-{{ color_mode }}
-  ml-0 {{ transparent_navbar ? 'transparent' }}"
+  ml-0 {{ (transparent_navbar and is_home) ? 'transparent' }}"
 >
   <div class="container">
     <div class="navbar-header">
@@ -28,8 +28,9 @@
             官網頁面
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{{ url('page/about') }}">伺服器簡介</a>
-            <a class="dropdown-item" href="{{ url('page/rules') }}">玩家守則</a>
+            <a class="dropdown-item" href="{{ url('page/download') }}">下載專區 (獨立 Twig)</a>
+            <a class="dropdown-item" href="{{ url('page/about') }}">伺服器簡介 (Markdown)</a>
+            <a class="dropdown-item" href="{{ url('page/rules') }}">玩家守則 (Markdown)</a>
           </div>
         </li>
 

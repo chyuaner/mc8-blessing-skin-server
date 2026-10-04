@@ -165,7 +165,7 @@
     </div>
   </div>
 
-  {% if not hide_intro %}
+  {# {% if not hide_intro %}
     <div id="intro">
       <div class="container">
         <div class="text-center">
@@ -187,10 +187,49 @@
         <br>
       </div>
     </div>
-  {% endif %}
+  {% endif %} #}
+
+  <div id="intro">
+    <div class="container">
+      <div class="text-center">
+        <h1>MC8 重度機械症 鐵路世界</h1>
+        <div class="container-lg mt-4">
+          <div class="row text-left mb-4">
+            <div class="col-lg-12">
+              <div class="markdown-body">
+                {{ markdown_file('about-short.md') }}
+              </div>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="text-center">
+                <ul class="list-inline mb-2">
+                  <li class="list-inline-item">
+                    <a href="{{ url('page/about') }}" class="main-button">伺服器簡介與現有設施</a>
+                  </li>
+                  <li class="list-inline-item">
+                    <a href="{{ url('page/common') }}" class="main-button">遊戲目標與主要玩法</a>
+                  </li>
+                  <li class="list-inline-item">
+                    <a href="{{ url('page/rules') }}" class="main-button">玩家規範</a>
+                  </li>
+                  <li class="list-inline-item">
+                    <a href="{{ url('page/commands') }}" class="main-button">常用指令</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
 
   {# 外層容器結構由 home.twig 自行管理，方便彈性排版 #}
-  <div id="home-content" class="container py-5">
+  <!--<div id="home-content" class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg">
         <article class="markdown-body p-4 bg-white rounded shadow-sm">
@@ -203,9 +242,9 @@
           <hr>
 
           {# 支援方式二：載入獨立 .md 檔案（markdown_file 僅輸出內層純內容，不干預外層 container） #}
-          {{ markdown_file('home.md') }}
+          {{ markdown_file('sample.md') }}
         </article>
       </div>
     </div>
-  </div>
+  </div>-->
 {% endblock %}

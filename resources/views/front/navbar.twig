@@ -14,7 +14,9 @@
             簡介和玩法說明
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
-            <li><a class="dropdown-item" href="{{ url('home') }}">重要公告</a></li>
+            {% if has_announcement %}
+              <li><a class="dropdown-item" href="{{ url('home') }}">重要公告</a></li>
+            {% endif %}
             <li><a class="dropdown-item" href="{{ url('page/commands') }}">常用指令</a></li>
             <li><a class="dropdown-item" href="{{ url('page/download') }}">下載與安裝教學</a></li>
             <li><hr class="dropdown-divider"></li>

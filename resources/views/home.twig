@@ -12,6 +12,12 @@
         background-image: url('{{ home_pic_url }}');
       {% endif %}
     }
+    html {
+      scroll-behavior: smooth;
+    }
+    #announcement {
+      scroll-margin-top: 80px;
+    }
   </style>
 {% endblock %}
 
@@ -45,7 +51,7 @@
 
         <ul class="list-inline mb-2">
           <li class="list-inline-item">
-            <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="main-button main-button-download">
+            <a href="{{ url('page/download') }}" class="main-button main-button-download">
               <i class="fas fa-download mr-1"></i>客戶端下載
             </a>
           </li>
@@ -65,7 +71,7 @@
         <div class="account-sync-hint mt-2">
           <div class="hint-pill">
             <i class="fas fa-shield-alt text-warning mr-1"></i>
-            <span><strong>帳號共用提醒：</strong>在此註冊之帳號密碼將同步連動遊戲內登入（<code>/login</code>），無須重複註冊。</span>
+            <span>在此註冊後的帳號密碼，將會同步連動遊戲內登入（<code>/login</code>）</span>
           </div>
         </div>
       </div>
@@ -95,7 +101,7 @@
 
       <div class="col-lg-6">
         {# 重要公告區塊：連動 Blessing Skin 系統公告 #}
-        <article class="markdown-body p-4 bg-white rounded shadow-sm mb-4 border">
+        <article id="announcement" class="markdown-body p-4 bg-white rounded shadow-sm mb-4 border">
           <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
             <h2 class="m-0 border-0 p-0 text-primary">
               <i class="fas fa-bullhorn mr-2"></i>重要公告
@@ -109,8 +115,7 @@
             </div>
           {% else %}
             <div class="text-center text-muted py-4">
-              <i class="fas fa-bell-slash fa-2x mb-2 text-black-50 d-block"></i>
-              <p class="m-0">目前沒有公告</p>
+              <p class="m-0"><i class="fas fa-bell-slash mr-2 text-black-50"></i>目前沒有公告</p>
             </div>
           {% endif %}
         </article>

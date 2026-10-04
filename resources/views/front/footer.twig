@@ -1,4 +1,4 @@
-<div id="footer-wrap">
+<!--<div id="footer-wrap">
   <div class="container">
     <div class="row">
       <div class="col-lg-6 mb-2">
@@ -10,6 +10,25 @@
           <li class="list-inline-item">
             <a href="{{ url('auth/register') }}" class="main-button">
               {{ trans('index.start') }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>-->
+<div id="footer-wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-2">
+        {{ site_name }} 是由鐵道迷創立的機械動力鐵路服伺服器，若想進來遊玩，請下載我們的客戶端。
+      </div>
+      <div class="col-lg-3"></div>
+      <div class="col-lg-3 d-flex justify-content-center align-items-center">
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <a href="{{ url('auth/download') }}" class="main-button">
+              <i class="fas fa-download mr-1"></i>客戶端下載
             </a>
           </li>
         </ul>

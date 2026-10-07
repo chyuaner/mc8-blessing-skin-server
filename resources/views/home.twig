@@ -470,7 +470,9 @@
       var statusBox = document.getElementById('mc-live-status-list');
       var playersEl = document.getElementById('mc-live-players');
 
-      fetch('https://mc8-api.yuaner.tw/ping/')
+      fetch('https://mc8-api.yuaner.tw/ping/?type=json', {
+        headers: { 'Accept': 'application/json' }
+      })
         .then(function (res) {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.json();
@@ -478,9 +480,13 @@
         .then(function (data) {
           if (statusBox) statusBox.style.display = 'block';
           var statusEl = document.getElementById('mc-live-status-badge');
-          if (data && data.players) {
+          if (data && data.players && !data.error) {
             if (statusEl) statusEl.textContent = '🟢 正常運作中';
-            if (playersEl) playersEl.textContent = (data.players.online || 0) + ' / ' + (data.players.max || 20) + ' 人';
+            var online = typeof data.players.online === 'number' ? data.players.online : 0;
+            var max = typeof data.players.max === 'number' ? data.players.max : 20;
+            if (playersEl) playersEl.textContent = online + ' / ' + max + ' 人';
+          } else {
+            if (statusEl) statusEl.textContent = '🔴 伺服器離線 / 維護中';
           }
         })
         .catch(function () {

@@ -18,6 +18,157 @@
     #announcement {
       scroll-margin-top: 80px;
     }
+
+    /* 伺服器連線卡片樣式（支援桌面雙欄並排與手機垂直結構） */
+    .server-ip-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 380px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .server-ip-container {
+        flex-direction: row;
+        justify-content: center;
+        max-width: 760px;
+        gap: 1rem;
+      }
+    }
+
+    .server-ip-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(18, 24, 32, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease-in-out;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .server-ip-card:hover {
+      background: rgba(28, 36, 48, 0.94);
+      border-color: rgba(255, 255, 255, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .server-ip-card:active {
+      transform: translateY(0);
+    }
+
+    .server-ip-card.copied {
+      border-color: rgba(81, 207, 102, 0.85) !important;
+      box-shadow: 0 0 18px rgba(81, 207, 102, 0.45) !important;
+    }
+
+    .server-ip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.45rem;
+      white-space: nowrap;
+    }
+
+    .server-ip-title {
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .server-ip-tags {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .server-ip-tags .badge {
+      font-size: 78%;
+      padding: 0.25em 0.45em;
+    }
+
+    .server-ip-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .server-ip-code {
+      flex: 1 1 auto;
+      text-align: center;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 0.25rem 0.45rem;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.6) !important;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .server-ip-primary .server-ip-code {
+      color: #51cf66 !important;
+      border: 1px solid rgba(81, 207, 102, 0.35);
+    }
+
+    .server-ip-cdn .server-ip-code {
+      color: #4dabf7 !important;
+      border: 1px solid rgba(77, 171, 247, 0.35);
+    }
+
+    .server-ip-copy-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.55rem;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 5px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .server-ip-card:hover .server-ip-copy-btn {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    @media (max-width: 576px) {
+      .server-ip-container {
+        max-width: 360px;
+      }
+      .server-ip-title {
+        font-size: 0.9rem;
+      }
+      .server-ip-code {
+        font-size: 0.86rem;
+        padding: 0.22rem 0.35rem;
+      }
+      .server-ip-copy-btn {
+        padding: 0.22rem 0.5rem;
+        font-size: 0.8rem;
+      }
+    }
   </style>
 {% endblock %}
 
@@ -29,23 +180,59 @@
 
     <div class="container">
       <div class="splash">
-        <h1 class="splash-head">{{ site_name }}</h1>
-        <p class="splash-subhead mb-3">
-          {{ site_description }}
-        </p>
+        <div class="mb-5">
+          <h1 class="splash-head">{{ site_name }}</h1>
+          <p class="splash-subhead mb-3">
+            {{ site_description }}
+          </p>
 
-        <div class="server-status-banner mb-3">
-          <img src="https://mc8-api.yuaner.tw/banner/mc8" class="img-fluid rounded shadow-sm" alt="伺服器即時狀態" style="max-height: 80px;">
+          <div class="server-status-banner">
+            <img src="https://mc8-api.yuaner.tw/banner/" class="img-fluid rounded shadow-sm" alt="伺服器即時狀態" style="max-height: 80px;" onerror="this.parentElement.style.display='none'">
+          </div>
         </div>
 
         <div class="server-ip-badges mb-4">
-          <div class="server-ip-box d-inline-flex flex-wrap justify-content-center align-items-center py-2 px-3 rounded-pill">
-            <span class="server-ip-badge-item text-white mr-sm-3 mr-2 mb-1 mb-sm-0">
-              <i class="fas fa-network-wired text-success mr-1"></i>主要網址 <span class="badge badge-success">IPv6 / IPv4</span>：<code>mc8.yuaner.tw</code>
-            </span>
-            <span class="server-ip-badge-item ip-backup text-white">
-              <i class="fas fa-server text-info mr-1"></i>備用網址 <span class="badge badge-secondary">IPv4</span>：<code>mc8-4.yuaner.tw</code>
-            </span>
+          <div class="server-ip-container">
+            <!-- 主要網址 -->
+            <div class="server-ip-card server-ip-primary" role="button" data-copy="mc8.yuaner.tw" title="點擊複製主要連線網址">
+              <div class="server-ip-header">
+                <div class="server-ip-title">
+                  <i class="fas fa-network-wired text-success mr-1"></i>
+                  <span class="server-ip-label">主要網址</span>
+                </div>
+                <div class="server-ip-tags">
+                  <span class="badge badge-success">IPv6 / IPv4</span>
+                </div>
+              </div>
+              <div class="server-ip-body">
+                <code class="server-ip-code">mc8.yuaner.tw</code>
+                <span class="server-ip-copy-btn">
+                  <i class="copy-icon fas fa-copy"></i>
+                  <span class="copy-text ml-1">複製</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- CDN 網址 -->
+            <div class="server-ip-card server-ip-cdn" role="button" data-copy="wss://mc8-ws.yuaner.tw" title="點擊複製 CDN 連線網址">
+              <div class="server-ip-header">
+                <div class="server-ip-title">
+                  <i class="fas fa-globe text-info mr-1"></i>
+                  <span class="server-ip-label">CDN 網址</span>
+                </div>
+                <div class="server-ip-tags">
+                  <span class="badge badge-primary mr-1">WebSocket</span>
+                  <span class="badge badge-warning">CDN</span>
+                </div>
+              </div>
+              <div class="server-ip-body">
+                <code class="server-ip-code code-cdn">wss://mc8-ws.yuaner.tw</code>
+                <span class="server-ip-copy-btn">
+                  <i class="copy-icon fas fa-copy"></i>
+                  <span class="copy-text ml-1">複製</span>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -95,12 +282,15 @@
             * **連線網址**：
                 * `mc8.yuaner.tw` <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span>
                 * `wss://mc8-ws.yuaner.tw` <span class="badge badge-primary">WebSocket</span> <span class="badge badge-warning">CDN</span>  <span class="badge badge-success">IPv6 / IPv4</span>
+            * **備用連線網址**：
                 * `mc8-4.yuaner.tw` <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span>
                 * `wss://mc8-play.yuaner.tw` <span class="badge badge-primary">WebSocket</span>  <span class="badge badge-success">IPv6 / IPv4</span>
                 * `wss://mc8-play4.yuaner.tw` <span class="badge badge-primary">WebSocket</span> <span class="badge badge-secondary">IPv4</span>
-            * **執行狀態**：🟢 正常運作中
-            * **最大玩家數**：20 人
+            * **玩家人數**：<span id="mc-live-players">最多20人</span>
           {% endapply %}
+          <ul id="mc-live-status-list" class="mb-0" style="display: none; margin-top: -8px;">
+            <li><strong>執行狀態</strong>：<span id="mc-live-status-badge">🟢 正常運作中</span></li>
+          </ul>
         </article>
       </div>
 
@@ -257,4 +447,103 @@
       </div>
     </div>
   </div>-->
+{% endblock %}
+
+{% block script %}
+  <script>
+    (function () {
+      // 1. 首頁透明導覽列滾動切換（純原生輕量處理）
+      var header = document.querySelector('.navbar');
+      var hero = document.querySelector('.hp-wrapper');
+      if (header && hero) {
+        window.addEventListener('scroll', function () {
+          var threshold = Math.max(hero.clientHeight - 80, 50);
+          if (window.scrollY >= threshold) {
+            header.classList.remove('transparent');
+          } else {
+            header.classList.add('transparent');
+          }
+        });
+      }
+
+      // 2. 即時狀態與人數查詢
+      var statusBox = document.getElementById('mc-live-status-list');
+      var playersEl = document.getElementById('mc-live-players');
+
+      fetch('https://mc8-api.yuaner.tw/ping/')
+        .then(function (res) {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(function (data) {
+          if (statusBox) statusBox.style.display = 'block';
+          var statusEl = document.getElementById('mc-live-status-badge');
+          if (data && data.players) {
+            if (statusEl) statusEl.textContent = '🟢 正常運作中';
+            if (playersEl) playersEl.textContent = (data.players.online || 0) + ' / ' + (data.players.max || 20) + ' 人';
+          }
+        })
+        .catch(function () {
+          if (statusBox) statusBox.style.display = 'block';
+          var statusEl = document.getElementById('mc-live-status-badge');
+          if (statusEl) statusEl.textContent = '🔴 伺服器離線 / 維護中';
+        });
+
+      // 3. 點選複製網址功能
+      function copyText(text, cardEl) {
+        function onSuccess() {
+          var icon = cardEl.querySelector('.copy-icon');
+          var textEl = cardEl.querySelector('.copy-text');
+          if (icon) icon.className = 'copy-icon fas fa-check text-success';
+          if (textEl) {
+            textEl.textContent = '已複製';
+            textEl.className = 'copy-text ml-1 text-success';
+          }
+          cardEl.classList.add('copied');
+
+          setTimeout(function () {
+            if (icon) icon.className = 'copy-icon fas fa-copy';
+            if (textEl) {
+              textEl.textContent = '複製';
+              textEl.className = 'copy-text ml-1';
+            }
+            cardEl.classList.remove('copied');
+          }, 1500);
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(onSuccess, fallback);
+        } else {
+          fallback();
+        }
+
+        function fallback() {
+          var input = document.createElement('textarea');
+          input.value = text;
+          input.style.position = 'fixed';
+          input.style.left = '-9999px';
+          document.body.appendChild(input);
+          input.focus();
+          input.select();
+          try {
+            document.execCommand('copy');
+            onSuccess();
+          } catch (e) {
+            console.error('複製失敗', e);
+          }
+          document.body.removeChild(input);
+        }
+      }
+
+      var copyCards = document.querySelectorAll('.server-ip-card');
+      for (var i = 0; i < copyCards.length; i++) {
+        copyCards[i].addEventListener('click', function () {
+          var text = this.getAttribute('data-copy');
+          if (text) {
+            copyText(text, this);
+          }
+        });
+      }
+    })();
+  </script>
 {% endblock %}

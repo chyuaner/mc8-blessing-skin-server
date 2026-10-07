@@ -22,11 +22,15 @@
       {{ include('front.footer', ignore_missing = true) }}
     {% endblock %}
 
-    <script type="application/json" id="blessing-extra">
-      {{ {transparent_navbar: transparent_navbar}|json_encode|raw }}
-    </script>
-    {{ include('assets.home', ignore_missing = true) }}
     {% block script %}{% endblock %}
-    {{ include('shared.foot') }}
+    {% for script in scripts %}
+      <script{% for attribute, value in script %} {{ attribute }}="{{ value }}"{% endfor %}></script>
+    {% endfor %}
+    {% if inline_js %}
+      <script>
+        {{ inline_js|striptags('<div><span><ul><li><p><a><img><i>')|raw }}
+      </script>
+    {% endif %}
+    {{ extra_foot|join('\n')|raw }}
   </body>
 </html>

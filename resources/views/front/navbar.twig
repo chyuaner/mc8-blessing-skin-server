@@ -3,9 +3,31 @@
 >
   <div class="container">
     <a href="{{ url('/') }}" class="navbar-brand text-truncate mr-auto mr-lg-3">{{ site_name }}</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+    <input type="checkbox" id="navbarResponsiveToggle" class="d-none" aria-hidden="true">
+    <label class="navbar-toggler mb-0" for="navbarResponsiveToggle" aria-controls="navbarResponsive" aria-label="Toggle navigation" role="button" tabindex="0">
       <span class="navbar-toggler-icon"></span>
-    </button>
+    </label>
+
+    <style>
+      /* 純 CSS 導覽列支援（無 JS 友善） */
+      @media (min-width: 992px) {
+        .navbar-nav .dropdown:hover > .dropdown-menu,
+        .navbar-nav .dropdown:focus-within > .dropdown-menu {
+          display: block;
+          margin-top: 0;
+        }
+      }
+      @media (max-width: 991.98px) {
+        #navbarResponsiveToggle:checked ~ #navbarResponsive {
+          display: block !important;
+        }
+        .navbar-nav .dropdown:focus-within > .dropdown-menu,
+        .navbar-nav .dropdown:hover > .dropdown-menu {
+          display: block;
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+      }
+    </style>
 
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ml-auto">
@@ -65,6 +87,15 @@
         {{ include('shared.languages') }}
         {% if auth_check() %}
           {{ include('shared.user-menu') }}
+          <form id="logout-form" action="{{ url('auth/logout') }}" method="POST" style="display: none;">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+          </form>
+          <script>
+            document.getElementById('logout-button')?.addEventListener('click', function(e) {
+              e.preventDefault();
+              document.getElementById('logout-form').submit();
+            });
+          </script>
         {% else %}
           <li class="nav-item ml-lg-2">
             <a class="nav-link nav-btn-login" href="{{ url('auth/login') }}">

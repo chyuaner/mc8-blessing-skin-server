@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => Middleware\CheckUserVerified::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
+        'guest.cache' => Middleware\GuestPageCache::class,
     ];
 }

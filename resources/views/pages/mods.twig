@@ -1,0 +1,712 @@
+{% extends 'front.base' %}
+
+{% block title %}有採用的模組 - {{ site_name }}{% endblock %}
+
+{% block style %}
+<style>
+  .mod-item-card {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .mod-item-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+  }
+  .mod-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    background-color: #f8fafc;
+  }
+  .mod-metadata-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+  .nav-pills .nav-link {
+    border-radius: 20px;
+    padding: 0.45rem 1.15rem;
+    font-weight: 500;
+    color: #4b5563;
+    transition: all 0.15s ease;
+  }
+  .nav-pills .nav-link.active {
+    background-color: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+  }
+  .search-wrapper {
+    position: relative;
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+  .mod-search-input {
+    padding-left: 2.5rem;
+    border-radius: 25px;
+    height: calc(2.4rem + 2px);
+  }
+  .badge-custom-mod {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+
+  /* Skeleton Loading 動畫 */
+  .skeleton-card {
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+  }
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* 深色模式支援 (相容 AdminLTE / Blessing Skin body.dark-mode) */
+  body.dark-mode .mod-item-card,
+  body.dark-mode .skeleton-card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+  body.dark-mode .mod-item-card h4,
+  body.dark-mode .mod-item-card h4 span {
+    color: #f8fafc !important;
+  }
+  body.dark-mode .mod-metadata-box {
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+    color: #cbd5e1 !important;
+  }
+  body.dark-mode .mod-metadata-box strong {
+    color: #e2e8f0;
+  }
+  body.dark-mode .mod-metadata-box code {
+    color: #93c5fd;
+    background-color: #1e293b;
+  }
+  body.dark-mode .mod-description-text {
+    color: #cbd5e1 !important;
+  }
+  body.dark-mode .mod-search-input,
+  body.dark-mode .custom-select {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+  }
+  body.dark-mode .mod-search-input::placeholder {
+    color: #64748b;
+  }
+  body.dark-mode .badge-custom-mod {
+    background-color: #78350f !important;
+    color: #fef3c7 !important;
+    border-color: #92400e !important;
+  }
+  body.dark-mode .nav-pills .nav-link {
+    color: #94a3b8;
+  }
+  body.dark-mode .nav-pills .nav-link.active {
+    background-color: #2563eb;
+    color: #ffffff;
+  }
+  body.dark-mode .skeleton-shimmer {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- 頁面頂部 Header -->
+  <div class="text-center mb-4">
+    <h1 class="font-weight-bold mb-2">📦 伺服器採用的模組</h1>
+    <p class="text-muted lead mb-2" style="font-size: 1.05rem;">
+      展示本伺服器運行所採用之模組資訊、功能簡介與下載載點。
+    </p>
+    <div class="d-flex justify-content-center align-items-center flex-wrap small text-muted">
+      <span class="mr-3 mb-1"><i class="fas fa-server mr-1"></i>資料來源：<a href="https://mc8-api.yuaner.tw" target="_blank" rel="noopener noreferrer">mc8-api.yuaner.tw</a></span>
+      <span class="mr-3 mb-1"><i class="fas fa-clock mr-1"></i>清單更新時間：<span id="lastUpdatedTime">-</span></span>
+      <span class="mb-1"><i class="fas fa-cubes mr-1"></i>目前分類模組數：<strong id="totalModsBadge" class="text-primary">-</strong> 款</span>
+    </div>
+  </div>
+
+  <!-- 分類篩選 Tabs (獨立網址來源解耦配置) -->
+  <div class="d-flex justify-content-center mb-4">
+    <ul class="nav nav-pills flex-wrap justify-content-center" id="modCategoryTabs" role="tablist">
+      <!-- 由 JS 依據獨立來源設定動態產生，並預留各分類獨立網址彈性 -->
+    </ul>
+  </div>
+
+  <!-- 工具列：即時搜尋、條件過濾與排序 -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+      <div class="row align-items-center">
+        <!-- 搜尋框 -->
+        <div class="col-md-5 mb-2 mb-md-0">
+          <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="modSearchInput" class="form-control mod-search-input" placeholder="搜尋模組名稱、作者、檔名或簡介關鍵字...">
+          </div>
+        </div>
+        <!-- 條件篩選 -->
+        <div class="col-md-4 mb-2 mb-md-0 d-flex align-items-center">
+          <div class="custom-control custom-checkbox mr-3">
+            <input type="checkbox" class="custom-control-input" id="filterCustomOnly">
+            <label class="custom-control-label small" for="filterCustomOnly" style="cursor: pointer;">只看伺服器自製/魔改</label>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="filterHasDescOnly">
+            <label class="custom-control-label small" for="filterHasDescOnly" style="cursor: pointer;">只看有簡介</label>
+          </div>
+        </div>
+        <!-- 排序選單 -->
+        <div class="col-md-3 d-flex justify-content-md-end align-items-center">
+          <label for="modSortSelect" class="small text-muted mb-0 mr-2 flex-shrink-0">排序：</label>
+          <select id="modSortSelect" class="custom-select custom-select-sm" style="border-radius: 20px;">
+            <option value="name_asc">模組名稱 (A-Z)</option>
+            <option value="name_desc">模組名稱 (Z-A)</option>
+            <option value="size_desc">檔案大小 (大至小)</option>
+            <option value="size_asc">檔案大小 (小至大)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 篩選結果狀態條 -->
+  <div class="d-flex justify-content-between align-items-center mb-3 small text-muted px-1">
+    <span id="filterStatsText">正在準備資料...</span>
+    <span id="pageStatsText"></span>
+  </div>
+
+  <!-- 模組列表容器 (支援 Skeleton 與真實卡片切換) -->
+  <div id="modListContainer">
+    <!-- 初始載入骨架屏 Skeleton -->
+    <div id="skeletonLoader">
+      {% for i in 1..4 %}
+      <div class="media mb-4 p-3 rounded shadow-sm skeleton-card">
+        <div class="skeleton-shimmer mr-3 rounded" style="width: 64px; height: 64px; flex-shrink: 0;"></div>
+        <div class="media-body" style="width: 100%;">
+          <div class="skeleton-shimmer mb-2" style="height: 24px; width: 35%;"></div>
+          <div class="skeleton-shimmer mb-2" style="height: 60px; width: 100%;"></div>
+          <div class="skeleton-shimmer" style="height: 18px; width: 75%;"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <!-- 真實模組卡片在此渲染 -->
+    <div id="renderedModCards"></div>
+  </div>
+
+  <!-- 查無結果或載入失敗提示 -->
+  <div id="emptyState" class="text-center py-5 d-none">
+    <i class="fas fa-search-minus fa-3x text-muted mb-3"></i>
+    <h5 class="text-muted">找不到符合條件的模組</h5>
+    <p class="text-secondary small">請嘗試更換搜尋關鍵字或調整篩選條件。</p>
+  </div>
+
+  <div id="errorState" class="text-center py-5 d-none">
+    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+    <h5 class="text-dark">無法取得模組清單</h5>
+    <p class="text-secondary small" id="errorMessageText">連線至 API 伺服器時發生異常，請稍後再試。</p>
+    <button id="retryFetchBtn" class="btn btn-outline-primary btn-sm rounded-pill px-4">重新嘗試</button>
+  </div>
+
+  <!-- 分頁控制器 -->
+  <div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Mod list pagination">
+      <ul class="pagination pagination-sm justify-content-center flex-wrap" id="paginationContainer"></ul>
+    </nav>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+(function() {
+  // =========================================================================
+  // 1. 各分類獨立資料來源網址配置 (完全預留分開維護與未來換網址彈性)
+  // =========================================================================
+  const TAB_SOURCES = [
+    {
+      id: 'common',
+      label: '伺服器採用模組',
+      url: 'https://mc8-api.yuaner.tw/mods?type=json',
+      isDefault: true
+    }
+    // {
+    //   id: 'common',
+    //   label: '共同模組 (玩家需裝)',
+    //   url: 'https://mc8-api.yuaner.tw/mods?type=json',
+    //   isDefault: true
+    // }
+    // {
+    //   id: 'client',
+    //   label: '客戶端專用模組',
+    //   url: 'https://mc8-api.yuaner.tw/client-mods?type=json',
+    //   isDefault: false
+    // },
+    // {
+    //   id: 'server',
+    //   label: '純伺服端模組',
+    //   url: 'https://mc8-api.yuaner.tw/server-mods?type=json',
+    //   isDefault: false
+    // },
+    // {
+    //   id: 'optional',
+    //   label: '可選輔助模組',
+    //   url: 'https://mc8-api.yuaner.tw/optional-mods?type=json',
+    //   isDefault: false
+    // }
+  ];
+
+  // 狀態管理
+  let currentTab = TAB_SOURCES.find(t => t.isDefault) || TAB_SOURCES[0];
+  let tabDataCache = {}; // 記憶體快取：{ [tabId]: { mods: [], updateAt: '', modsHash: '' } }
+  let currentRawMods = [];
+  let filteredMods = [];
+  let currentPage = 1;
+  const pageSize = 30;
+
+  // DOM 元素引用
+  const tabsContainer = document.getElementById('modCategoryTabs');
+  const skeletonLoader = document.getElementById('skeletonLoader');
+  const renderedCardsContainer = document.getElementById('renderedModCards');
+  const emptyState = document.getElementById('emptyState');
+  const errorState = document.getElementById('errorState');
+  const errorMessageText = document.getElementById('errorMessageText');
+  const retryBtn = document.getElementById('retryFetchBtn');
+  const searchInput = document.getElementById('modSearchInput');
+  const filterCustomOnly = document.getElementById('filterCustomOnly');
+  const filterHasDescOnly = document.getElementById('filterHasDescOnly');
+  const sortSelect = document.getElementById('modSortSelect');
+  const paginationContainer = document.getElementById('paginationContainer');
+  const totalModsBadge = document.getElementById('totalModsBadge');
+  const lastUpdatedTime = document.getElementById('lastUpdatedTime');
+  const filterStatsText = document.getElementById('filterStatsText');
+  const pageStatsText = document.getElementById('pageStatsText');
+
+  // =========================================================================
+  // 2. 初始化 Tab 選單
+  // =========================================================================
+  function renderTabs() {
+    tabsContainer.innerHTML = '';
+    TAB_SOURCES.forEach(tab => {
+      const li = document.createElement('li');
+      li.className = 'nav-item mx-1 mb-2';
+      const a = document.createElement('a');
+      a.className = `nav-link ${tab.id === currentTab.id ? 'active' : ''}`;
+      a.href = 'javascript:void(0);';
+      a.textContent = tab.label;
+      a.addEventListener('click', () => switchTab(tab));
+      li.appendChild(a);
+      tabsContainer.appendChild(li);
+    });
+  }
+
+  function switchTab(tab) {
+    if (currentTab.id === tab.id && currentRawMods.length > 0) return;
+    currentTab = tab;
+    currentPage = 1;
+    renderTabs();
+    loadTabData(currentTab);
+  }
+
+  // =========================================================================
+  // 3. 資料獲取與快取 (獨立 API Fetch)
+  // =========================================================================
+  async function loadTabData(tab) {
+    showLoading();
+
+    // 若瀏覽器記憶體中已有快取，直接使用
+    if (tabDataCache[tab.id]) {
+      applyData(tabDataCache[tab.id]);
+      return;
+    }
+
+    try {
+      const response = await fetch(tab.url, {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} (${response.statusText})`);
+      }
+
+      const data = await response.json();
+      tabDataCache[tab.id] = data;
+      applyData(data);
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  function applyData(data) {
+    currentRawMods = Array.isArray(data.mods) ? data.mods : [];
+    totalModsBadge.textContent = currentRawMods.length;
+
+    if (data.updateAt) {
+      const dt = new Date(data.updateAt);
+      lastUpdatedTime.textContent = dt.toLocaleString('zh-TW', { hour12: false });
+    } else {
+      lastUpdatedTime.textContent = '未知';
+    }
+
+    hideStates();
+    applyFilterAndSort();
+  }
+
+  // =========================================================================
+  // 4. 篩選、搜尋與排序邏輯
+  // =========================================================================
+  function applyFilterAndSort() {
+    const keyword = searchInput.value.trim().toLowerCase();
+    const customOnly = filterCustomOnly.checked;
+    const hasDescOnly = filterHasDescOnly.checked;
+    const sortMode = sortSelect.value;
+
+    filteredMods = currentRawMods.filter(mod => {
+      // 自製模組篩選
+      if (customOnly && !mod.isCustomMod) {
+        return false;
+      }
+      // 簡介篩選
+      const desc = mod.summary || mod.description || '';
+      if (hasDescOnly && desc.trim().length === 0) {
+        return false;
+      }
+      // 關鍵字比對 (名稱、檔名、作者、簡介、modId)
+      if (keyword) {
+        const name = (mod.displayName || mod.name || '').toLowerCase();
+        const fileName = (mod.fileName || mod.filename || '').toLowerCase();
+        const modId = (mod.modId || '').toLowerCase();
+        const authors = Array.isArray(mod.authors) ? mod.authors.join(' ').toLowerCase() : '';
+        const descText = desc.toLowerCase();
+
+        const match = name.includes(keyword) ||
+                      fileName.includes(keyword) ||
+                      modId.includes(keyword) ||
+                      authors.includes(keyword) ||
+                      descText.includes(keyword);
+        if (!match) return false;
+      }
+      return true;
+    });
+
+    // 排序
+    filteredMods.sort((a, b) => {
+      const nameA = (a.displayName || a.name || '').toLowerCase();
+      const nameB = (b.displayName || b.name || '').toLowerCase();
+      const sizeA = a.fileLength || 0;
+      const sizeB = b.fileLength || 0;
+
+      switch (sortMode) {
+        case 'name_desc': return nameB.localeCompare(nameA);
+        case 'size_desc': return sizeB - sizeA;
+        case 'size_asc': return sizeA - sizeB;
+        case 'name_asc':
+        default: return nameA.localeCompare(nameB);
+      }
+    });
+
+    // 狀態資訊更新
+    filterStatsText.textContent = `共 ${currentRawMods.length} 款模組，篩選出 ${filteredMods.length} 款`;
+
+    if (filteredMods.length === 0) {
+      showEmpty();
+    } else {
+      hideStates();
+      renderCurrentPage();
+      renderPagination();
+    }
+  }
+
+  // =========================================================================
+  // 5. 渲染模組卡片 (比照 dev-mods.md 風格 + 智慧載點按鈕)
+  // =========================================================================
+  function renderCurrentPage() {
+    renderedCardsContainer.innerHTML = '';
+    const startIndex = (currentPage - 1) * pageSize;
+    const pageMods = filteredMods.slice(startIndex, startIndex + pageSize);
+
+    const fromCount = startIndex + 1;
+    const toCount = Math.min(startIndex + pageSize, filteredMods.length);
+    pageStatsText.textContent = `顯示第 ${fromCount} - ${toCount} 筆`;
+
+    const fragment = document.createDocumentFragment();
+
+    pageMods.forEach(mod => {
+      const card = document.createElement('div');
+      card.className = 'media mb-4 p-3 bg-white rounded border shadow-sm mod-item-card';
+
+      // 圖標決定：優先本地快取 logo.url ➜ 本地縮圖 thumbnailUrl ➜ default-mod.svg
+      const iconUrl = (mod.logo && mod.logo.url)
+        ? mod.logo.url
+        : ((mod.logo && mod.logo.thumbnailUrl) ? mod.logo.thumbnailUrl : '/images/mods/default-mod.svg');
+
+      const name = escapeHtml(mod.displayName || mod.name || '未知模組');
+      const version = escapeHtml(mod.version || '最新');
+      const fileName = escapeHtml(mod.fileName || mod.filename || '');
+      const authors = Array.isArray(mod.authors) && mod.authors.length > 0
+        ? escapeHtml(mod.authors.join(', '))
+        : '社群開源作者';
+      const desc = escapeHtml(mod.summary || mod.description || '暫無說明');
+      const isCustom = mod.isCustomMod === true;
+
+      // 產生載點與連結按鈕組
+      const downloadButtonsHtml = buildDownloadButtons(mod);
+
+      card.innerHTML = `
+        <img src="${iconUrl}"
+             class="mr-3 rounded shadow-sm align-self-start flex-shrink-0 mod-icon"
+             width="64" height="64"
+             alt="${name}"
+             loading="lazy"
+             onerror="this.onerror=null; this.src='/images/mods/default-mod.svg';">
+        <div class="media-body" style="min-width: 0;">
+          <div class="d-flex justify-content-between align-items-baseline flex-wrap mb-1">
+            <h4 class="mb-1 text-dark font-weight-bold d-flex align-items-center flex-wrap" style="font-size: 1.22rem;">
+              <span class="mr-2 text-truncate">${name}</span>
+              ${isCustom ? '<span class="badge badge-custom-mod font-weight-normal py-1 px-2" style="font-size: 0.72rem;"><i class="fas fa-hammer mr-1"></i>伺服器專屬 / 魔改</span>' : ''}
+            </h4>
+            <span class="badge badge-primary px-2 py-1 font-weight-normal" style="font-size: 0.78rem;">${version}</span>
+          </div>
+
+          <div class="bg-light p-2 px-3 rounded mb-2 border text-secondary small mod-metadata-box">
+            <ul class="list-unstyled mb-0 pl-0">
+              <li class="mb-1"><strong>📦 模組識別：</strong><code>${escapeHtml(mod.modId || name)}</code> <span class="text-muted small">（<code>${fileName}</code>）</span></li>
+              <li class="mb-1"><strong>👤 模組作者：</strong>${authors}</li>
+              <li class="mb-1"><strong>⚙️ 適用環境：</strong>NeoForge 1.21.1</li>
+              <li class="d-flex align-items-center flex-wrap mt-2 pt-1 border-top" style="border-color: rgba(0,0,0,0.06) !important;">
+                <strong class="mr-2 flex-shrink-0">🔗 載點與連結：</strong>
+                <div class="d-flex align-items-center flex-wrap mt-1 mt-md-0">
+                  ${downloadButtonsHtml}
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mod-description-text text-muted" style="font-size: 0.91rem; line-height: 1.55;">
+            <strong>模組簡介</strong>：${desc}
+          </div>
+        </div>
+      `;
+      fragment.appendChild(card);
+    });
+
+    renderedCardsContainer.appendChild(fragment);
+  }
+
+  // 智慧下載與連結按鈕產生
+  function buildDownloadButtons(mod) {
+    let btns = '';
+    const isCustom = mod.isCustomMod === true;
+    const downloadUrl = mod.downloadUrl || mod.download;
+    const serverUrl = mod.serverDownloadUrl;
+    const source = mod.downloadSource || 'server';
+
+    // 1. 主要下載按鈕
+    if (isCustom) {
+      // 自製模組：純伺服端自建載點
+      if (serverUrl) {
+        btns += `<a href="${serverUrl}" class="btn btn-sm btn-primary py-0 px-2 mr-2 mb-1" target="_blank" download>
+                   <i class="fas fa-download mr-1"></i>伺服器直連下載
+                 </a>`;
+      }
+    } else {
+      // 公開社群模組：優先官方 CDN
+      if (downloadUrl) {
+        const cdnBadge = source === 'modrinth' ? 'Modrinth CDN' : (source === 'curseforge' ? 'CurseForge CDN' : 'CDN');
+        btns += `<a href="${downloadUrl}" class="btn btn-sm btn-primary py-0 px-2 mr-2 mb-1" target="_blank" download>
+                   <i class="fas fa-bolt mr-1"></i>官方下載 <span class="badge badge-light ml-1 font-weight-normal py-0" style="font-size: 0.65rem;">${cdnBadge}</span>
+                 </a>`;
+      }
+      // 同時提供伺服器保底分流鏡像
+      if (serverUrl) {
+        btns += `<a href="${serverUrl}" class="btn btn-sm btn-outline-secondary py-0 px-2 mr-2 mb-1" target="_blank" download title="當外部 CDN 異常時可使用本服鏡像">
+                   <i class="fas fa-server mr-1"></i>伺服器分流
+                 </a>`;
+      }
+    }
+
+    // 2. 外部平台徽章 (Modrinth, CurseForge, 官網/原始碼)
+    const links = mod.links || {};
+    if (links.modrinthUrl) {
+      btns += `<a href="${links.modrinthUrl}" class="btn btn-sm btn-outline-success py-0 px-2 mr-2 mb-1" target="_blank" rel="noopener noreferrer">
+                 <i class="fas fa-cube mr-1"></i>Modrinth
+               </a>`;
+    }
+    if (links.curseforgeUrl) {
+      btns += `<a href="${links.curseforgeUrl}" class="btn btn-sm btn-outline-warning py-0 px-2 mr-2 mb-1" target="_blank" rel="noopener noreferrer">
+                 <i class="fas fa-fire mr-1"></i>CurseForge
+               </a>`;
+    }
+    const webUrl = links.sourceUrl || links.websiteUrl;
+    if (webUrl && webUrl !== links.modrinthUrl && webUrl !== links.curseforgeUrl) {
+      btns += `<a href="${webUrl}" class="btn btn-sm btn-outline-info py-0 px-2 mr-2 mb-1" target="_blank" rel="noopener noreferrer">
+                 <i class="fas fa-external-link-alt mr-1"></i>官網/原始碼
+               </a>`;
+    }
+
+    return btns;
+  }
+
+  // =========================================================================
+  // 6. 分頁控制器
+  // =========================================================================
+  function renderPagination() {
+    paginationContainer.innerHTML = '';
+    const totalPages = Math.ceil(filteredMods.length / pageSize);
+    if (totalPages <= 1) return;
+
+    // 前一頁
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = `<a class="page-link" href="javascript:void(0);">上一頁</a>`;
+    prevLi.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        goToPage();
+      }
+    });
+    paginationContainer.appendChild(prevLi);
+
+    // 計算分頁數字區間 (顯示最多 7 個頁碼)
+    let startPage = Math.max(1, currentPage - 3);
+    let endPage = Math.min(totalPages, startPage + 6);
+    if (endPage - startPage < 6) {
+      startPage = Math.max(1, endPage - 6);
+    }
+
+    for (let p = startPage; p <= endPage; p++) {
+      const pageLi = document.createElement('li');
+      pageLi.className = `page-item ${p === currentPage ? 'active' : ''}`;
+      pageLi.innerHTML = `<a class="page-link" href="javascript:void(0);">${p}</a>`;
+      const targetPage = p;
+      pageLi.addEventListener('click', () => {
+        if (currentPage !== targetPage) {
+          currentPage = targetPage;
+          goToPage();
+        }
+      });
+      paginationContainer.appendChild(pageLi);
+    }
+
+    // 下一頁
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    nextLi.innerHTML = `<a class="page-link" href="javascript:void(0);">下一頁</a>`;
+    nextLi.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        goToPage();
+      }
+    });
+    paginationContainer.appendChild(nextLi);
+  }
+
+  function goToPage() {
+    renderCurrentPage();
+    renderPagination();
+    // 平滑捲動至列表頂部
+    document.getElementById('modListContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // =========================================================================
+  // 7. 輔助函式與狀態控制
+  // =========================================================================
+  function showLoading() {
+    skeletonLoader.classList.remove('d-none');
+    renderedCardsContainer.innerHTML = '';
+    emptyState.classList.add('d-none');
+    errorState.classList.add('d-none');
+    paginationContainer.innerHTML = '';
+    filterStatsText.textContent = '正在從 API 載入模組清單...';
+    pageStatsText.textContent = '';
+  }
+
+  function hideStates() {
+    skeletonLoader.classList.add('d-none');
+    emptyState.classList.add('d-none');
+    errorState.classList.add('d-none');
+  }
+
+  function showEmpty() {
+    skeletonLoader.classList.add('d-none');
+    renderedCardsContainer.innerHTML = '';
+    emptyState.classList.remove('d-none');
+    errorState.classList.add('d-none');
+    paginationContainer.innerHTML = '';
+    pageStatsText.textContent = '';
+  }
+
+  function showError(msg) {
+    skeletonLoader.classList.add('d-none');
+    renderedCardsContainer.innerHTML = '';
+    emptyState.classList.add('d-none');
+    errorState.classList.remove('d-none');
+    errorMessageText.textContent = msg || '連線至 API 伺服器時發生異常。';
+    paginationContainer.innerHTML = '';
+    filterStatsText.textContent = '載入失敗';
+    pageStatsText.textContent = '';
+  }
+
+  function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+  }
+
+  // 防抖 (debounce)
+  function debounce(fn, delay) {
+    let timer = null;
+    return function(...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  // 事件監聽綁定
+  searchInput.addEventListener('input', debounce(() => {
+    currentPage = 1;
+    applyFilterAndSort();
+  }, 250));
+
+  filterCustomOnly.addEventListener('change', () => {
+    currentPage = 1;
+    applyFilterAndSort();
+  });
+
+  filterHasDescOnly.addEventListener('change', () => {
+    currentPage = 1;
+    applyFilterAndSort();
+  });
+
+  sortSelect.addEventListener('change', () => {
+    currentPage = 1;
+    applyFilterAndSort();
+  });
+
+  retryBtn.addEventListener('click', () => {
+    loadTabData(currentTab);
+  });
+
+  // 啟動初始化
+  renderTabs();
+  loadTabData(currentTab);
+})();
+</script>
+{% endblock %}

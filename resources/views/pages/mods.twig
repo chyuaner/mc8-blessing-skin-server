@@ -522,7 +522,12 @@
                     : '/images/mods/default-mod.svg')));
 
       const name = escapeHtml(mod.displayName || mod.name || '未知模組');
-      const version = escapeHtml(mod.version || '最新');
+      let versionText = (mod.version && mod.version !== '最新' && !mod.version.startsWith('${')) ? mod.version : '';
+      if (!versionText) {
+        const fnMatch = (mod.fileName || mod.filename || '').match(/[-_\s]+v?(\d[\w.\+\-]*)\.jar$/i);
+        versionText = fnMatch ? fnMatch[1] : '未標註';
+      }
+      const version = escapeHtml(versionText);
       const fileName = escapeHtml(mod.fileName || mod.filename || '');
       const authors = Array.isArray(mod.authors) && mod.authors.length > 0
         ? escapeHtml(mod.authors.join(', '))

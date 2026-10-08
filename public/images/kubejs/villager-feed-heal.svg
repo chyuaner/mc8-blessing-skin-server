@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-villager" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="heart-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#e11d48"/>
+    </linearGradient>
+    <linearGradient id="emerald-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="bowl-wood" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <linearGradient id="soup-golden" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <filter id="shadow-villager" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-villager)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+  <!-- Steaming Food Bowl (Farmer's Delight / Minecraft Stew) -->
+  <g filter="url(#shadow-villager)">
+    <!-- Food Bowl Base -->
+    <path d="M 28 66 C 28 92 100 92 100 66 Z" fill="url(#bowl-wood)" stroke="#451a03" stroke-width="2.5"/>
+    <!-- Bowl Rim & Soup Top -->
+    <ellipse cx="64" cy="66" rx="36" ry="10" fill="url(#soup-golden)" stroke="#451a03" stroke-width="2"/>
+    <!-- Garnish in soup -->
+    <circle cx="56" cy="66" r="3" fill="#22c55e"/>
+    <circle cx="70" cy="65" r="2.5" fill="#ef4444"/>
+    <circle cx="63" cy="68" r="2" fill="#fbbf24"/>
+
+    <!-- Steam Waves -->
+    <path d="M 48 52 Q 44 44 48 36" fill="none" stroke="#f1f5f9" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+    <path d="M 64 50 Q 68 40 64 30" fill="none" stroke="#f1f5f9" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 80 52 Q 84 44 80 36" fill="none" stroke="#f1f5f9" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+  </g>
+
+  <!-- Radiant Healing Heart (Top Left) -->
+  <g filter="url(#shadow-villager)">
+    <path d="M 32 30 C 32 24 24 20 18 25 C 10 32 18 42 32 52 C 46 42 54 32 46 25 C 40 20 32 24 32 30 Z" fill="url(#heart-red)"/>
+    <!-- Heart Glint -->
+    <circle cx="24" cy="28" r="2" fill="#ffffff" opacity="0.8"/>
+  </g>
+
+  <!-- Happy Villager Emerald Star / Particles (Top Right) -->
+  <g filter="url(#shadow-villager)">
+    <!-- Main Happy Green Star -->
+    <path d="M 96 20 L 98 27 L 105 29 L 98 31 L 96 38 L 94 31 L 87 29 L 94 27 Z" fill="url(#emerald-grad)"/>
+    <!-- Small Particle 1 -->
+    <circle cx="82" cy="44" r="3" fill="#34d399"/>
+    <!-- Small Particle 2 -->
+    <circle cx="108" cy="46" r="2.5" fill="#a7f3d0"/>
+  </g>
+</svg>

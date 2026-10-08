@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-railway" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="track-metal" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="50%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <linearGradient id="shield-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="ban-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <filter id="shadow-rs" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-railway)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+  <!-- Railway Track Base -->
+  <g filter="url(#shadow-rs)">
+    <!-- Wooden Sleepers / Ties -->
+    <rect x="24" y="86" width="80" height="8" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+    <rect x="28" y="70" width="72" height="8" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+    <rect x="32" y="54" width="64" height="8" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+    <rect x="36" y="38" width="56" height="8" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+
+    <!-- Steel Rails (Perspective) -->
+    <polygon points="40,30 46,30 33,98 27,98" fill="url(#track-metal)"/>
+    <polygon points="82,30 88,30 101,98 95,98" fill="url(#track-metal)"/>
+  </g>
+
+  <!-- Clearance / Forcefield Radar Dome Arc -->
+  <path d="M 22 96 A 44 44 0 0 1 106 96" fill="none" stroke="url(#shield-cyan)" stroke-width="3" stroke-dasharray="6,4" opacity="0.85"/>
+
+  <!-- Ban / Spawning Prevention Emblem -->
+  <g filter="url(#shadow-rs)">
+    <!-- Shield / Badge Base -->
+    <circle cx="88" cy="40" r="22" fill="#1e293b" stroke="url(#ban-red)" stroke-width="3.5"/>
+    
+    <!-- Ban Slash Circle -->
+    <circle cx="88" cy="40" r="16" fill="none" stroke="url(#ban-red)" stroke-width="3"/>
+    <line x1="77" y1="29" x2="99" y2="51" stroke="url(#ban-red)" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Creature / Creeper Silhouette Inside -->
+    <path d="M84 34 H92 V44 H90 V41 H86 V44 H84 Z" fill="#94a3b8" opacity="0.9"/>
+  </g>
+</svg>

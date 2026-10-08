@@ -7,6 +7,8 @@
   .mod-item-card {
     transition: transform 0.18s ease, box-shadow 0.18s ease;
     border: 1px solid rgba(0, 0, 0, 0.08);
+    content-visibility: auto;
+    contain-intrinsic-size: 0 160px;
   }
   .mod-item-card:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
@@ -122,6 +124,24 @@
     background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
     background-size: 200% 100%;
   }
+  body.dark-mode .alert-secondary {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+  }
+  body.dark-mode kbd {
+    background-color: #334155;
+    color: #f8fafc;
+  }
+  body.dark-mode .btn-outline-secondary {
+    color: #94a3b8;
+    border-color: #475569;
+  }
+  body.dark-mode .btn-outline-secondary:hover {
+    color: #ffffff;
+    background-color: #334155;
+    border-color: #475569;
+  }
 </style>
 {% endblock %}
 
@@ -152,14 +172,14 @@
     <div class="card-body p-3">
       <div class="row align-items-center">
         <!-- 搜尋框 -->
-        <div class="col-md-5 mb-2 mb-md-0">
+        <div class="col-lg-4 col-md-6 mb-2 mb-lg-0">
           <div class="search-wrapper">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="modSearchInput" class="form-control mod-search-input" placeholder="搜尋模組名稱、作者、檔名或簡介關鍵字...">
           </div>
         </div>
         <!-- 條件篩選 -->
-        <div class="col-md-4 mb-2 mb-md-0 d-flex align-items-center">
+        <div class="col-lg-3 col-md-6 mb-2 mb-lg-0 d-flex align-items-center">
           <div class="custom-control custom-checkbox mr-3">
             <input type="checkbox" class="custom-control-input" id="filterCustomOnly">
             <label class="custom-control-label small" for="filterCustomOnly" style="cursor: pointer;">只看伺服器自製/魔改</label>
@@ -169,15 +189,26 @@
             <label class="custom-control-label small" for="filterHasDescOnly" style="cursor: pointer;">只看有簡介</label>
           </div>
         </div>
-        <!-- 排序選單 -->
-        <div class="col-md-3 d-flex justify-content-md-end align-items-center">
-          <label for="modSortSelect" class="small text-muted mb-0 mr-2 flex-shrink-0">排序：</label>
-          <select id="modSortSelect" class="custom-select custom-select-sm" style="border-radius: 20px;">
-            <option value="name_asc">模組名稱 (A-Z)</option>
-            <option value="name_desc">模組名稱 (Z-A)</option>
-            <option value="size_desc">檔案大小 (大至小)</option>
-            <option value="size_asc">檔案大小 (小至大)</option>
-          </select>
+        <!-- 排序與每頁筆數 -->
+        <div class="col-lg-5 col-md-12 mt-2 mt-lg-0 d-flex justify-content-md-start justify-content-lg-end align-items-center flex-wrap">
+          <div class="d-flex align-items-center mr-3 mb-1 mb-sm-0">
+            <label for="modSortSelect" class="small text-muted mb-0 mr-2 flex-shrink-0">排序：</label>
+            <select id="modSortSelect" class="custom-select custom-select-sm" style="border-radius: 20px; width: auto;">
+              <option value="name_asc">名稱 (A-Z)</option>
+              <option value="name_desc">名稱 (Z-A)</option>
+              <option value="size_desc">檔案大小 (大至小)</option>
+              <option value="size_asc">檔案大小 (小至大)</option>
+            </select>
+          </div>
+          <div class="d-flex align-items-center mb-1 mb-sm-0">
+            <label for="pageSizeSelect" class="small text-muted mb-0 mr-2 flex-shrink-0">每頁：</label>
+            <select id="pageSizeSelect" class="custom-select custom-select-sm" style="border-radius: 20px; width: auto;">
+              <option value="30">30 筆</option>
+              <option value="60">60 筆</option>
+              <option value="120">120 筆</option>
+              <option value="all">全部顯示</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -222,11 +253,28 @@
     <button id="retryFetchBtn" class="btn btn-outline-primary btn-sm rounded-pill px-4">重新嘗試</button>
   </div>
 
-  <!-- 分頁控制器 -->
-  <div class="d-flex justify-content-center mt-4">
-    <nav aria-label="Mod list pagination">
-      <ul class="pagination pagination-sm justify-content-center flex-wrap" id="paginationContainer"></ul>
+  <!-- 分頁控制器與全部顯示提示 -->
+  <div class="d-flex flex-column align-items-center mt-4" id="paginationWrapper">
+    <nav aria-label="Mod list pagination" id="paginationNav">
+      <ul class="pagination pagination-sm justify-content-center flex-wrap mb-2" id="paginationContainer"></ul>
     </nav>
+    <div id="showAllBottomNotice" class="d-none w-100 text-center">
+      <div class="alert alert-secondary border d-inline-block text-center py-2 px-3 mb-2 shadow-sm" style="max-width: 650px;">
+        <div>
+          <i class="fas fa-info-circle text-primary mr-1"></i> 目前已全部展開顯示共 <strong id="allCountNotice">0</strong> 款模組，可直接使用鍵盤 <kbd>Ctrl</kbd> + <kbd>F</kbd>（Mac 為 <kbd>⌘</kbd> + <kbd>F</kbd>）快速搜尋。
+        </div>
+        <div class="mt-2">
+          <button id="bottomRestorePaginationBtn" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1">
+            <i class="fas fa-th-list mr-1"></i>返回分頁模式 (30 筆/頁)
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="bottomToggleContainer" class="text-center mt-1">
+      <button id="bottomToggleShowAllBtn" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+        <i class="fas fa-expand-alt mr-1"></i>一次全部顯示所有模組 (方便 Ctrl+F 查找)
+      </button>
+    </div>
   </div>
 </div>
 {% endblock %}
@@ -276,7 +324,7 @@
   let currentRawMods = [];
   let filteredMods = [];
   let currentPage = 1;
-  const pageSize = 30;
+  let pageSize = 30; // 數值或 'all'
 
   // DOM 元素引用
   const tabsContainer = document.getElementById('modCategoryTabs');
@@ -290,7 +338,14 @@
   const filterCustomOnly = document.getElementById('filterCustomOnly');
   const filterHasDescOnly = document.getElementById('filterHasDescOnly');
   const sortSelect = document.getElementById('modSortSelect');
+  const pageSizeSelect = document.getElementById('pageSizeSelect');
   const paginationContainer = document.getElementById('paginationContainer');
+  const paginationNav = document.getElementById('paginationNav');
+  const showAllBottomNotice = document.getElementById('showAllBottomNotice');
+  const bottomToggleContainer = document.getElementById('bottomToggleContainer');
+  const allCountNotice = document.getElementById('allCountNotice');
+  const bottomToggleShowAllBtn = document.getElementById('bottomToggleShowAllBtn');
+  const bottomRestorePaginationBtn = document.getElementById('bottomRestorePaginationBtn');
   const totalModsBadge = document.getElementById('totalModsBadge');
   const lastUpdatedTime = document.getElementById('lastUpdatedTime');
   const filterStatsText = document.getElementById('filterStatsText');
@@ -436,12 +491,18 @@
   // =========================================================================
   function renderCurrentPage() {
     renderedCardsContainer.innerHTML = '';
-    const startIndex = (currentPage - 1) * pageSize;
-    const pageMods = filteredMods.slice(startIndex, startIndex + pageSize);
 
-    const fromCount = startIndex + 1;
-    const toCount = Math.min(startIndex + pageSize, filteredMods.length);
-    pageStatsText.textContent = `顯示第 ${fromCount} - ${toCount} 筆`;
+    let pageMods = [];
+    if (pageSize === 'all') {
+      pageMods = filteredMods;
+      pageStatsText.textContent = `顯示全部 ${filteredMods.length} 筆模組`;
+    } else {
+      const startIndex = (currentPage - 1) * pageSize;
+      pageMods = filteredMods.slice(startIndex, startIndex + pageSize);
+      const fromCount = startIndex + 1;
+      const toCount = Math.min(startIndex + pageSize, filteredMods.length);
+      pageStatsText.textContent = `顯示第 ${fromCount} - ${toCount} 筆`;
+    }
 
     const fragment = document.createDocumentFragment();
 
@@ -449,10 +510,16 @@
       const card = document.createElement('div');
       card.className = 'media mb-4 p-3 bg-white rounded border shadow-sm mod-item-card';
 
-      // 圖標決定：優先本地快取 logo.url ➜ 本地縮圖 thumbnailUrl ➜ default-mod.svg
+      // 圖標決定：優先本地快取 logo.url ➜ 本地縮圖 thumbnailUrl ➜ 官方 CDN (Modrinth/CurseForge) ➜ default-mod.svg
       const iconUrl = (mod.logo && mod.logo.url)
         ? mod.logo.url
-        : ((mod.logo && mod.logo.thumbnailUrl) ? mod.logo.thumbnailUrl : '/images/mods/default-mod.svg');
+        : ((mod.logo && mod.logo.thumbnailUrl)
+            ? mod.logo.thumbnailUrl
+            : ((mod.logo && mod.logo.modrinthUrl)
+                ? mod.logo.modrinthUrl
+                : ((mod.logo && mod.logo.curseForgeUrl)
+                    ? mod.logo.curseForgeUrl
+                    : '/images/mods/default-mod.svg')));
 
       const name = escapeHtml(mod.displayName || mod.name || '未知模組');
       const version = escapeHtml(mod.version || '最新');
@@ -562,12 +629,42 @@
   }
 
   // =========================================================================
-  // 6. 分頁控制器
+  // 6. 分頁控制器與全部顯示模式
   // =========================================================================
   function renderPagination() {
     paginationContainer.innerHTML = '';
+
+    // 若篩選無結果
+    if (filteredMods.length === 0) {
+      paginationNav.classList.add('d-none');
+      showAllBottomNotice.classList.add('d-none');
+      bottomToggleContainer.classList.add('d-none');
+      return;
+    }
+
+    // 全部顯示模式 (pageSize === 'all')
+    if (pageSize === 'all') {
+      paginationNav.classList.add('d-none');
+      bottomToggleContainer.classList.add('d-none');
+      showAllBottomNotice.classList.remove('d-none');
+      if (allCountNotice) {
+        allCountNotice.textContent = filteredMods.length;
+      }
+      return;
+    }
+
+    // 分頁模式
+    showAllBottomNotice.classList.add('d-none');
+
     const totalPages = Math.ceil(filteredMods.length / pageSize);
-    if (totalPages <= 1) return;
+    if (totalPages <= 1) {
+      paginationNav.classList.add('d-none');
+      bottomToggleContainer.classList.add('d-none');
+      return;
+    }
+
+    paginationNav.classList.remove('d-none');
+    bottomToggleContainer.classList.remove('d-none');
 
     // 前一頁
     const prevLi = document.createElement('li');
@@ -631,6 +728,9 @@
     emptyState.classList.add('d-none');
     errorState.classList.add('d-none');
     paginationContainer.innerHTML = '';
+    paginationNav.classList.add('d-none');
+    showAllBottomNotice.classList.add('d-none');
+    bottomToggleContainer.classList.add('d-none');
     filterStatsText.textContent = '正在從 API 載入模組清單...';
     pageStatsText.textContent = '';
   }
@@ -647,6 +747,9 @@
     emptyState.classList.remove('d-none');
     errorState.classList.add('d-none');
     paginationContainer.innerHTML = '';
+    paginationNav.classList.add('d-none');
+    showAllBottomNotice.classList.add('d-none');
+    bottomToggleContainer.classList.add('d-none');
     pageStatsText.textContent = '';
   }
 
@@ -657,6 +760,9 @@
     errorState.classList.remove('d-none');
     errorMessageText.textContent = msg || '連線至 API 伺服器時發生異常。';
     paginationContainer.innerHTML = '';
+    paginationNav.classList.add('d-none');
+    showAllBottomNotice.classList.add('d-none');
+    bottomToggleContainer.classList.add('d-none');
     filterStatsText.textContent = '載入失敗';
     pageStatsText.textContent = '';
   }
@@ -698,6 +804,31 @@
   sortSelect.addEventListener('change', () => {
     currentPage = 1;
     applyFilterAndSort();
+  });
+
+  pageSizeSelect.addEventListener('change', () => {
+    currentPage = 1;
+    const val = pageSizeSelect.value;
+    pageSize = (val === 'all') ? 'all' : (parseInt(val, 10) || 30);
+    renderCurrentPage();
+    renderPagination();
+  });
+
+  bottomToggleShowAllBtn.addEventListener('click', () => {
+    pageSizeSelect.value = 'all';
+    pageSize = 'all';
+    currentPage = 1;
+    renderCurrentPage();
+    renderPagination();
+  });
+
+  bottomRestorePaginationBtn.addEventListener('click', () => {
+    pageSizeSelect.value = '30';
+    pageSize = 30;
+    currentPage = 1;
+    renderCurrentPage();
+    renderPagination();
+    document.getElementById('modListContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   retryBtn.addEventListener('click', () => {

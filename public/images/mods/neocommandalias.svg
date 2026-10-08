@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-neoalias" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a154b"/>
+      <stop offset="100%" stop-color="#2c0b4d"/>
+    </linearGradient>
+    <linearGradient id="branch-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <filter id="shadow-alias" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-neoalias)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+  <!-- Command slash symbol in background -->
+  <text x="32" y="52" font-family="monospace, sans-serif" font-weight="bold" font-size="34" fill="#a855f7" opacity="0.35">/</text>
+
+  <!-- Git/Brigadier branching graph -->
+  <g filter="url(#shadow-alias)">
+    <!-- Root Line -->
+    <path d="M38 90 V50 C38 40 48 38 60 38 H84" fill="none" stroke="#e0e7ff" stroke-width="5" stroke-linecap="round"/>
+    <!-- Branch Line -->
+    <path d="M38 72 C38 64 50 64 64 64 H84" fill="none" stroke="#f43f5e" stroke-width="5" stroke-linecap="round"/>
+    <!-- Lower Branch Line -->
+    <path d="M38 90 H84" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Nodes / Arrows -->
+    <!-- Root Node -->
+    <circle cx="38" cy="90" r="7" fill="#ffffff"/>
+    <circle cx="38" cy="72" r="5" fill="#f43f5e"/>
+
+    <!-- Target Arrow 1 (Upper: /co) -->
+    <polygon points="82,32 94,38 82,44" fill="#e0e7ff"/>
+    <!-- Target Arrow 2 (Mid: /res) -->
+    <polygon points="82,58 94,64 82,70" fill="#f43f5e"/>
+    <!-- Target Arrow 3 (Lower: /alias) -->
+    <polygon points="82,84 94,90 82,96" fill="#38bdf8"/>
+  </g>
+</svg>

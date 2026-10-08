@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-tabgm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f3443"/>
+      <stop offset="100%" stop-color="#34e89e"/>
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="shadow-tab" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="#111827"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(52,232,158,0.3)" stroke-width="2"/>
+
+  <!-- TAB Panel Card -->
+  <rect x="18" y="22" width="92" height="84" rx="10" fill="url(#card-grad)" stroke="#334155" stroke-width="2" filter="url(#shadow-tab)"/>
+
+  <!-- Row 1: Survival Player (Heart) -->
+  <rect x="26" y="32" width="76" height="20" rx="6" fill="#1e293b"/>
+  <!-- Head avatar -->
+  <rect x="30" y="36" width="12" height="12" rx="2" fill="#38bdf8"/>
+  <!-- Name text simulation -->
+  <rect x="46" y="40" width="30" height="4" rx="2" fill="#94a3b8"/>
+  <!-- Survival Heart Icon -->
+  <path d="M90 41 C88 38 84 38 84 42 C84 46 90 50 90 50 C90 50 96 46 96 42 C96 38 92 38 90 41 Z" fill="#ef4444"/>
+
+  <!-- Row 2: Creative Player (Star) -->
+  <rect x="26" y="56" width="76" height="20" rx="6" fill="#1e293b"/>
+  <!-- Head avatar -->
+  <rect x="30" y="60" width="12" height="12" rx="2" fill="#f59e0b"/>
+  <!-- Name text simulation -->
+  <rect x="46" y="64" width="26" height="4" rx="2" fill="#94a3b8"/>
+  <!-- Creative Star/Crown -->
+  <polygon points="90,59 92,64 97,64 93,67 95,72 90,69 85,72 87,67 83,64 88,64" fill="#fbbf24"/>
+
+  <!-- Row 3: Spectator Player (Eye) -->
+  <rect x="26" y="80" width="76" height="20" rx="6" fill="#1e293b"/>
+  <!-- Head avatar -->
+  <rect x="30" y="84" width="12" height="12" rx="2" fill="#a855f7"/>
+  <!-- Name text simulation -->
+  <rect x="46" y="88" width="22" height="4" rx="2" fill="#94a3b8"/>
+  <!-- Spectator Eye -->
+  <path d="M84 90 C86 86 94 86 96 90 C94 94 86 94 84 90 Z" fill="none" stroke="#a855f7" stroke-width="2"/>
+  <circle cx="90" cy="90" r="2" fill="#a855f7"/>
+</svg>

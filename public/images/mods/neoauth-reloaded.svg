@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-neoauth" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141E30"/>
+      <stop offset="100%" stop-color="#243B55"/>
+    </linearGradient>
+    <linearGradient id="shield-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38ef7d"/>
+      <stop offset="100%" stop-color="#11998e"/>
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE000"/>
+      <stop offset="100%" stop-color="#799F0C"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-neoauth)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+  
+  <!-- Outer Shield Outline -->
+  <path d="M64 22 C84 22 96 28 98 38 C98 68 84 92 64 104 C44 92 30 68 30 38 C32 28 44 22 64 22 Z" 
+        fill="url(#shield-grad)" filter="url(#shadow)"/>
+  
+  <!-- Inner Shield Detail -->
+  <path d="M64 28 C80 28 90 33 92 41 C92 66 80 86 64 96 C48 86 36 66 36 41 C38 33 48 28 64 28 Z" 
+        fill="#141e30" opacity="0.4"/>
+
+  <!-- Lock Shackle -->
+  <path d="M54 54 V46 C54 40.5 58.5 36 64 36 C69.5 36 74 40.5 74 46 V54" 
+        fill="none" stroke="#FFE000" stroke-width="6" stroke-linecap="round"/>
+  <!-- Lock Body -->
+  <rect x="50" y="52" width="28" height="24" rx="5" fill="#FFE000"/>
+  <!-- Keyhole -->
+  <circle cx="64" cy="61" r="3.5" fill="#141e30"/>
+  <polygon points="62.5,61 65.5,61 66.5,70 61.5,70" fill="#141e30"/>
+
+  <!-- Security Check Star -->
+  <circle cx="86" cy="84" r="14" fill="#38ef7d" filter="url(#shadow)"/>
+  <path d="M79 84 L84 89 L93 79" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

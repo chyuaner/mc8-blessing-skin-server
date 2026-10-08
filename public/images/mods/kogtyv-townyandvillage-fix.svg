@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-kog" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9a3412"/>
+      <stop offset="100%" stop-color="#7c2d12"/>
+    </linearGradient>
+    <linearGradient id="roof-vill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadow-kog" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-kog)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+
+  <!-- Village Houses (Town & Village) -->
+  <g filter="url(#shadow-kog)">
+    <!-- House 1 (Left Village Hut) -->
+    <polygon points="36,44 20,60 52,60" fill="url(#roof-vill)"/>
+    <rect x="24" y="60" width="24" height="28" fill="#f8fafc"/>
+    <rect x="32" y="72" width="8" height="16" fill="#78350f"/>
+
+    <!-- House 2 (Main Townhall Tower) -->
+    <polygon points="64,24 46,44 82,44" fill="#f97316"/>
+    <rect x="50" y="44" width="28" height="44" fill="#ffffff"/>
+    <rect x="58" y="66" width="12" height="22" rx="2" fill="#78350f"/>
+    <!-- Belfry clock/window -->
+    <circle cx="64" cy="54" r="4.5" fill="#38bdf8"/>
+
+    <!-- House 3 (Right Hut) -->
+    <polygon points="92,48 78,62 106,62" fill="url(#roof-vill)"/>
+    <rect x="82" y="62" width="20" height="26" fill="#f8fafc"/>
+    <rect x="88" y="74" width="8" height="14" fill="#78350f"/>
+  </g>
+
+  <!-- Jigsaw Piece & Repair Wrench Badge -->
+  <g filter="url(#shadow-kog)">
+    <circle cx="92" cy="92" r="18" fill="#10b981"/>
+    <!-- Repair Hammer / Wrench -->
+    <path d="M84 94 L94 84 M91 81 L97 87 M82 96 L86 100" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="95" cy="83" r="3" fill="#ffffff"/>
+  </g>
+</svg>

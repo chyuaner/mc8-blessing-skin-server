@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-essentials" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="roof-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadow-ess" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-essentials)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+
+  <!-- Compass Dial Ring in background -->
+  <circle cx="64" cy="64" r="42" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-dasharray="6,4"/>
+
+  <!-- Teleport Warp Portal Spiral / Base Ring -->
+  <ellipse cx="64" cy="94" r="32" ry="10" fill="#60a5fa" opacity="0.4" filter="url(#shadow-ess)"/>
+
+  <!-- Home Icon (The central house) -->
+  <g filter="url(#shadow-ess)">
+    <!-- Roof -->
+    <polygon points="64,28 34,54 42,54 42,86 86,86 86,54 94,54" fill="#ffffff"/>
+    <polygon points="64,34 40,54 88,54" fill="url(#roof-grad)"/>
+    <!-- House Body -->
+    <rect x="46" y="54" width="36" height="32" fill="#f8fafc"/>
+    <!-- Door -->
+    <rect x="58" y="66" width="12" height="20" rx="3" fill="#3b82f6"/>
+    <!-- Door handle -->
+    <circle cx="67" cy="76" r="1.5" fill="#facc15"/>
+    <!-- Window -->
+    <rect x="49" y="60" width="8" height="8" rx="1" fill="#93c5fd"/>
+    <rect x="71" y="60" width="8" height="8" rx="1" fill="#93c5fd"/>
+  </g>
+
+  <!-- Warp Sparkles -->
+  <polygon points="26,36 29,42 35,45 29,48 26,54 23,48 17,45 23,42" fill="#facc15"/>
+  <polygon points="102,32 104,36 108,38 104,40 102,44 100,40 96,38 100,36" fill="#facc15"/>
+  <polygon points="98,82 100,85 103,86 100,88 98,91 96,88 93,86 96,85" fill="#60a5fa"/>
+</svg>

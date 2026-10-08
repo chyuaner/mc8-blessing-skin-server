@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-tnt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <linearGradient id="tnt-red" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="lightning-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow-tnt" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-tnt)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+
+  <!-- Minecraft TNT Block -->
+  <g filter="url(#shadow-tnt)">
+    <!-- TNT Top Section -->
+    <rect x="28" y="32" width="72" height="16" fill="url(#tnt-red)"/>
+    <!-- TNT Fuse wick -->
+    <path d="M64 32 C64 26 69 22 72 18" fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+    <!-- Spark on fuse -->
+    <circle cx="72" cy="18" r="4" fill="#fbbf24"/>
+    <circle cx="72" cy="18" r="2" fill="#ef4444"/>
+
+    <!-- TNT White Label Band -->
+    <rect x="28" y="48" width="72" height="26" fill="#f8fafc"/>
+    <!-- "TNT" Pixel Lettering -->
+    <text x="64" y="69" font-family="'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="22" fill="#0f172a" text-anchor="middle" letter-spacing="2">TNT</text>
+
+    <!-- TNT Bottom Section -->
+    <rect x="28" y="74" width="72" height="22" fill="url(#tnt-red)"/>
+    <!-- TNT Sticks divisions -->
+    <line x1="42" y1="32" x2="42" y2="96" stroke="#991b1b" stroke-width="2"/>
+    <line x1="56" y1="32" x2="56" y2="96" stroke="#991b1b" stroke-width="2"/>
+    <line x1="72" y1="32" x2="72" y2="96" stroke="#991b1b" stroke-width="2"/>
+    <line x1="86" y1="32" x2="86" y2="96" stroke="#991b1b" stroke-width="2"/>
+  </g>
+
+  <!-- Speed Lightning Bolt (BFS algorithm acceleration) -->
+  <polygon points="96,24 80,56 94,56 74,98 84,68 70,68" fill="url(#lightning-grad)" stroke="#ffffff" stroke-width="2" filter="url(#shadow-tnt)"/>
+</svg>

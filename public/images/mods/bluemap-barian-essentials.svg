@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-bm-ess" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="pin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <filter id="shadow-bm" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-bm-ess)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+
+  <!-- Isometric 3D Map Grid Block -->
+  <g filter="url(#shadow-bm)">
+    <!-- Top Face of Isometric Block -->
+    <polygon points="64,52 102,72 64,92 26,72" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+    <!-- Contour lines on map -->
+    <path d="M42 64 Q64 76 86 64" fill="none" stroke="#bae6fd" stroke-width="2"/>
+    <path d="M48 74 Q64 82 80 74" fill="none" stroke="#bae6fd" stroke-width="1.5"/>
+
+    <!-- Left Face of 3D Block -->
+    <polygon points="26,72 64,92 64,106 26,86" fill="#0284c7"/>
+    <!-- Right Face of 3D Block -->
+    <polygon points="64,92 102,72 102,86 64,106" fill="#0369a1"/>
+  </g>
+
+  <!-- BlueMap 3D Marker Pin Dropping onto Map -->
+  <g filter="url(#shadow-bm)">
+    <!-- Pin Shape -->
+    <path d="M64 18 C51 18 40 29 40 42 C40 58 64 74 64 74 C64 74 88 58 88 42 C88 29 77 18 64 18 Z" fill="url(#pin-grad)" stroke="#ffffff" stroke-width="2.5"/>
+    <!-- Pin Center: Home silhouette -->
+    <circle cx="64" cy="40" r="13" fill="#ffffff"/>
+    <polygon points="64,31 56,38 58,38 58,47 70,47 70,38 72,38" fill="#dc2626"/>
+  </g>
+</svg>

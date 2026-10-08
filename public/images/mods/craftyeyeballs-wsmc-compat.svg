@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-crafty" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b192c"/>
+      <stop offset="100%" stop-color="#1e3e62"/>
+    </linearGradient>
+    <linearGradient id="eye-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <filter id="shadow-eye" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-crafty)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(56,189,248,0.25)" stroke-width="2"/>
+
+  <!-- Network Orbit Rings (Happy Eyeballs Dual Stack IPv4/IPv6 + WSMC) -->
+  <ellipse cx="64" cy="64" rx="46" ry="18" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="8,5" transform="rotate(-25 64 64)"/>
+  <ellipse cx="64" cy="64" rx="46" ry="18" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="8,5" transform="rotate(25 64 64)"/>
+
+  <!-- Orbital Node Packets -->
+  <circle cx="28" cy="48" r="4.5" fill="#38bdf8"/>
+  <circle cx="100" cy="80" r="4.5" fill="#38bdf8"/>
+  <circle cx="28" cy="80" r="4.5" fill="#f59e0b"/>
+  <circle cx="100" cy="48" r="4.5" fill="#f59e0b"/>
+
+  <!-- Central Eyeball (Happy Eyeballs Symbol) -->
+  <g filter="url(#shadow-eye)">
+    <!-- Eye Sclera Outer Contour -->
+    <path d="M30 64 C42 44 86 44 98 64 C86 84 42 84 30 64 Z" fill="#ffffff" stroke="#0ea5e9" stroke-width="2"/>
+    <!-- Iris -->
+    <circle cx="64" cy="64" r="15" fill="url(#eye-grad)"/>
+    <!-- Pupil -->
+    <circle cx="64" cy="64" r="7.5" fill="#0f172a"/>
+    <!-- Reflection Sparkle -->
+    <circle cx="60" cy="60" r="3" fill="#ffffff"/>
+  </g>
+</svg>

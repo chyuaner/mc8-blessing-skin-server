@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-c6c" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="chip-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="shadow-c6c" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-c6c)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+  <!-- Microchip / Bytecode Circuit Core -->
+  <g filter="url(#shadow-c6c)">
+    <!-- Circuit Pins -->
+    <path d="M40 32 V22 M52 32 V22 M64 32 V22 M76 32 V22 M88 32 V22" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+    <path d="M40 96 V106 M52 96 V106 M64 96 V106 M76 96 V106 M88 96 V106" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+    <path d="M32 40 H22 M32 52 H22 M32 64 H22 M32 76 H22 M32 88 H22" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+    <path d="M96 40 H106 M96 52 H106 M96 64 H106 M96 76 H106 M96 88 H106" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Central Chip Body -->
+    <rect x="32" y="32" width="64" height="64" rx="8" fill="url(#chip-grad)" stroke="#38bdf8" stroke-width="2"/>
+    <!-- Chip notch/dot -->
+    <circle cx="42" cy="42" r="3" fill="#38bdf8"/>
+
+    <!-- "330" Hex/Assembly Tag in chip -->
+    <text x="64" y="62" font-family="'Courier New', monospace" font-weight="bold" font-size="16" fill="#e0f2fe" text-anchor="middle">#330</text>
+    <text x="64" y="78" font-family="'Courier New', monospace" font-weight="bold" font-size="11" fill="#7dd3fc" text-anchor="middle">HOTFIX</text>
+  </g>
+
+  <!-- Patch/Shield Badge -->
+  <g filter="url(#shadow-c6c)">
+    <circle cx="92" cy="92" r="18" fill="#10b981"/>
+    <path d="M84 92 L90 98 L101 86" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg-neosh" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f242d"/>
+      <stop offset="100%" stop-color="#0f1117"/>
+    </linearGradient>
+    <linearGradient id="term-header" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2d3748"/>
+      <stop offset="100%" stop-color="#1a202c"/>
+    </linearGradient>
+    <filter id="shadow-sh" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-neosh)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+
+  <!-- Terminal Window -->
+  <g filter="url(#shadow-sh)">
+    <!-- Terminal Outer Frame -->
+    <rect x="20" y="24" width="88" height="80" rx="10" fill="#14171f" stroke="#374151" stroke-width="2"/>
+    <!-- Terminal Titlebar -->
+    <path d="M20 34 C20 28.5 24.5 24 30 24 H98 C103.5 24 108 28.5 108 34 V40 H20 Z" fill="url(#term-header)"/>
+    <!-- Traffic Dots -->
+    <circle cx="32" cy="32" r="3.5" fill="#ef4444"/>
+    <circle cx="42" cy="32" r="3.5" fill="#f59e0b"/>
+    <circle cx="52" cy="32" r="3.5" fill="#10b981"/>
+  </g>
+
+  <!-- Prompt symbol >_ -->
+  <path d="M34 56 L46 66 L34 76" fill="none" stroke="#00f2fe" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Cursor block -->
+  <rect x="54" y="69" width="16" height="5" rx="1.5" fill="#4facfe"/>
+
+  <!-- Output lines simulation (ANSI colors) -->
+  <rect x="34" y="86" width="22" height="4" rx="2" fill="#10b981" opacity="0.85"/>
+  <rect x="60" y="86" width="34" height="4" rx="2" fill="#fbbf24" opacity="0.75"/>
+</svg>

@@ -1,0 +1,225 @@
+<style>
+  /* 通用行內文字 / 連結複製樣式 */
+  .copy-text-link,
+  .copy-link,
+  .copy-ip-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none !important;
+    cursor: pointer;
+  }
+  .copy-text-link code,
+  .copy-link code,
+  .copy-ip-link code {
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .copy-text-link:hover code,
+  .copy-link:hover code,
+  .copy-ip-link:hover code {
+    background-color: #e2e8f0;
+    color: #0366d6;
+  }
+
+  /* 通用複製按鈕與卡片指標樣式 */
+  .copy-btn,
+  .copy-text-btn,
+  .copy-card,
+  [data-copy] {
+    cursor: pointer;
+  }
+
+  /* Bootstrap 4 視覺風格 Tooltip (純 CSS，支援所有帶有 data-tooltip 的元素) */
+  [data-tooltip] {
+    position: relative;
+  }
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    background-color: #000;
+    border-radius: 0.25rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease, background-color 0.2s ease;
+    z-index: 1070;
+  }
+
+  [data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 1px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px 5px 0;
+    border-style: solid;
+    border-color: #000 transparent transparent;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease, border-top-color 0.2s ease;
+    z-index: 1070;
+  }
+
+  [data-tooltip]:hover::before,
+  [data-tooltip]:hover::after,
+  [data-tooltip].copied::before,
+  [data-tooltip].copied::after {
+    opacity: 0.9;
+    visibility: visible;
+  }
+
+  [data-tooltip].copied::after {
+    background-color: #28a745;
+  }
+  [data-tooltip].copied::before {
+    border-top-color: #28a745;
+  }
+
+  /* 備用位址與折疊項目次項目折疊樣式 */
+  .backup-server-addresses summary {
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+  }
+  .backup-server-addresses summary::-webkit-details-marker,
+  .backup-server-addresses summary::marker {
+    display: none;
+  }
+  .backup-server-addresses .backup-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+  .backup-server-addresses[open] .backup-arrow {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  (function () {
+    /**
+     * 全域通用文字複製函式
+     * @param {string} text 要複製的字串
+     * @param {HTMLElement|null} targetEl 觸發複製的元素（可選，提供視覺回饋）
+     * @param {Function|null} customSuccess 成功回呼函式（可選）
+     */
+    function copyText(text, targetEl, customSuccess) {
+      function onSuccess() {
+        if (typeof customSuccess === 'function') {
+          customSuccess();
+        }
+
+        if (targetEl) {
+          applyCopyFeedback(targetEl);
+        }
+      }
+
+      function fallback() {
+        var input = document.createElement('textarea');
+        input.value = text;
+        input.style.position = 'fixed';
+        input.style.left = '-9999px';
+        document.body.appendChild(input);
+        input.focus();
+        input.select();
+        try {
+          var successful = document.execCommand('copy');
+          if (successful) onSuccess();
+        } catch (e) {
+          console.error('複製失敗', e);
+        }
+        document.body.removeChild(input);
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(onSuccess, fallback);
+      } else {
+        fallback();
+      }
+    }
+
+    /**
+     * 套用複製成功時的視覺回饋（Tooltip、Icon、文字替換）
+     */
+    function applyCopyFeedback(el) {
+      el.classList.add('copied');
+
+      // 1. Tooltip 回饋
+      if (el.hasAttribute('data-tooltip')) {
+        if (!el._origTooltip) {
+          el._origTooltip = el.getAttribute('data-tooltip');
+        }
+        el.setAttribute('data-tooltip', '已複製！');
+      }
+
+      // 2. 子元素圖示與文字回饋 (.copy-icon, .copy-text)
+      var icon = el.querySelector('.copy-icon');
+      var textEl = el.querySelector('.copy-text');
+      if (icon && !icon._origClass) {
+        icon._origClass = icon.className;
+        icon.className = 'copy-icon fas fa-check text-success';
+      }
+      if (textEl && !textEl._origText) {
+        textEl._origText = textEl.textContent;
+        textEl.textContent = '已複製';
+        textEl.classList.add('text-success');
+      }
+
+      // 計時器復原
+      if (el._copyTimer) clearTimeout(el._copyTimer);
+      el._copyTimer = setTimeout(function () {
+        el.classList.remove('copied');
+        if (el._origTooltip) {
+          el.setAttribute('data-tooltip', el._origTooltip);
+        }
+        if (icon && icon._origClass) {
+          icon.className = icon._origClass;
+          icon._origClass = null;
+        }
+        if (textEl && textEl._origText) {
+          textEl.textContent = textEl._origText;
+          textEl.classList.remove('text-success');
+          textEl._origText = null;
+        }
+        el._copyTimer = null;
+      }, 1500);
+    }
+
+    // 事件委派：監聽全域所有帶有 data-copy 的元素點擊
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-copy]');
+      if (!trigger) return;
+
+      var text = trigger.getAttribute('data-copy');
+      if (!text) return;
+
+      if (trigger.tagName === 'A' && (trigger.getAttribute('href') === 'javascript:void(0);' || trigger.getAttribute('href') === '#')) {
+        e.preventDefault();
+      }
+
+      copyText(text, trigger);
+    });
+
+    // 滑鼠移出時若未處於 copied 狀態則確保還原 Tooltip
+    document.addEventListener('mouseleave', function (e) {
+      var trigger = e.target.closest && e.target.closest('[data-copy][data-tooltip]');
+      if (trigger && !trigger.classList.contains('copied') && trigger._origTooltip) {
+        trigger.setAttribute('data-tooltip', trigger._origTooltip);
+      }
+    }, true);
+
+    // 暴露全域 API
+    window.copyText = copyText;
+  })();
+</script>

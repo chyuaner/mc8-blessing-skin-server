@@ -4,11 +4,13 @@
 
 {% block content %}
   <div class="container py-5">
+    <div class="text-center">
+        <h1>📥 官方客戶端下載</h1>
+    </div>
     <div class="row justify-content-center">
       <div class="col-lg">
         <div class="card shadow-sm border-0 mb-4">
           <div class="card-body p-4">
-            <h3 class="card-title font-weight-bold">📥 官方客戶端下載</h3>
             <p class="card-text text-muted">
               內含沉浸式鐵路、重度機械症科技模組。
             </p>
@@ -21,7 +23,41 @@
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="container">
+    <div class="text-center">
+      <!--<h1>本伺服器連線特色</h1>
+      <br>
+      <br>-->
+      <div class="container-lg">
+        <div class="row">
+          <div class="col-lg">
+            <i class="fas {{ trans("index.features.first.icon") }} mb-3" aria-hidden="true"></i>
+            <h3>TCP/WebSocket 支援</h3>
+            <p>除了提供Minecraft原生的25565 TCP支援以外，有特別增加WebSocket支援，並掛上Cloudflare代理。詳情請看下述</p>
+          </div>
+          <div class="col-lg">
+            <i class="fas {{ trans("index.features.second.icon") }} mb-3" aria-hidden="true"></i>
+            <h3>IPv6/IPv4 雙線路支援</h3>
+            <p>提供國內穩定的IPv4，與全球性的IPv6支援。詳情請看下述</p>
+          </div>
+          <div class="col-lg">
+            <i class="fas {{ trans("index.features.third.icon") }} mb-3" aria-hidden="true"></i>
+            <h3>Mojang正版/離線登入</h3>
+            <p>本伺服器除了接受Mojang正版以外，也提供安全的傳統密碼方式供離線帳號玩家也能進入</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg">
         <article class="mb-4 markdown-body p-4 bg-white rounded shadow-sm border">
           {% apply markdown %}
             ## 提供多個連線位址，以及相關用途說明
@@ -39,6 +75,11 @@
 
             ---
             ### 備用遊戲位址
+            <details>
+              <summary>
+                主要線路異常時使用，點擊展開
+              </summary>
+
             #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-4.yuaner.tw" data-tooltip="點選複製"><code>mc8-4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 (IPv4 Only)
             * **用途：** 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
             * 其他特性都與 `mc8.yuaner.tw` 一致
@@ -60,17 +101,72 @@
             * 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
             * 其他特性都與 `mc8-4.yuaner.tw` 一致
 
+            </details>
           {% endapply %}
         </article>
 
+        <article class="markdown-body p-4 bg-white rounded shadow-sm border">
+          {% apply markdown %}
+            ## 提供多種登入方式
+
+            ### Mojang正版登入
+            * 本伺服器偵測到正版認證成功，將自動放行讓你登入
+            * 會自動將Mojang的正版所設定的皮膚連動
+            * 連動進來後，也會在對應的網站角色、Bluemap地圖網站出現對應的皮膚頭像
+
+            ### 離線帳號傳統密碼登入
+            * 進入伺服器會提示輸入密碼，若沒有正確輸入密碼，將無法做後續任何操作
+            * 玩家皮膚將會與本網站你所設定的皮膚連動
+
+            ### authlib-injector外置密碼登入 （實驗）
+            * 由你的啟動器做好帳號密碼設定
+
+          {% endapply %}
+        </article>
+      </div>
+    </div>
+  </div>
+  <div class="container py-5">
+    <h1 class="text-center">客戶端匯入說明</h1>
+    <div class="row justify-content-center">
+      <div class="col-lg">
         {# 混合撰寫 Markdown 安裝指南 #}
         <article class="markdown-body p-4 bg-white rounded shadow-sm border">
           {% apply markdown %}
-            ### 🛠️ 安裝步驟指引
-            1. 下載上方整合包並解壓縮至任意目錄。
-            2. 使用支援 Java 17+ 的啟動器（如 PCL2、HMCL、MultiMC）匯入。
-            3. 分配至少 **4GB (4096MB)** 記憶體以確保流暢運作。
-            4. 啟動遊戲並點選連線進入伺服器！
+            ### 🛠️ Prism Launcher / Fjord Launcher 匯入步驟指引
+
+            推薦使用 **Prism Launcher** 或 **Fjord Launcher**（繁體中文社群版）進行安裝與遊玩：
+
+            #### 1. 取得整合包檔案
+            - 點選上方按鈕進入雲端硬碟，下載官方整合包壓縮檔（`.zip`）。
+            - **請注意：保持 `.zip` 壓縮檔完整，無須手動解壓縮。**
+
+            #### 2. 匯入至啟動器
+            - 開啟 **Prism Launcher**（或 **Fjord Launcher**）。
+            - 點擊左上角的 **「新增實例」 (Add Instance)**。
+            - 在左側選單切換至 **「從 zip 匯入」 (Import from zip)**。
+            - 點擊「瀏覽」選取剛下載的整合包 `.zip` 檔案（或直接將 `.zip` 檔案拖曳進啟動器主視窗）。
+            - 確認實例名稱後點擊 **「確定」**，等待啟動器自動下載依賴與建置環境。
+
+            <div class="my-3 text-center">
+              <a href="/pages/Screenshot_20261008_101640.png" target="_blank" title="點擊檢視原始高解析度截圖">
+                <img src="/pages/Screenshot_20261008_101640.png" class="img-fluid" alt="PrismLauncher-Import" style="max-width: 680px; width: 100%;">
+              </a>
+              <div class="text-muted small mt-2">（點擊圖片可放大檢視原始截圖）</div>
+            </div>
+
+
+            #### 3. 配置 Java 與記憶體（關鍵步驟）
+            - 點選剛匯入完成的實例，點擊右側面板的 **「編輯」 (Edit)** 或 **「設定」 (Settings)**。
+            - 切換至 **「Java」** 設定分頁：
+              - **Java 執行版本**：伺服器為 **NeoForge 1.21.1**，請務必選擇 **Java 21**（可點擊「自動偵測」或透過啟動器直接下載安裝 Java 21）。
+              - **記憶體大小**：勾選「覆蓋全域設定」，建議將 **最大記憶體配置 (Maximum memory allocation)** 設定為至少 **4096 MB (4GB)**，建議配置 **6144 MB ~ 8192 MB (6~8GB)** 以確保沉浸式鐵路與大型機械運轉順暢。
+
+            #### 4. 登入帳號並進入伺服器
+            - 點擊啟動器右上角「帳號」管理，新增並選取您的離線帳號或微軟帳號。
+            - **帳號連動**：遊戲內角色名稱請與本網站註冊之角色一致。
+            - 點擊 **「啟動」** 開啟遊戲。進入多人遊戲列表即可看到伺服器（亦可使用上方連線位址手動加入）。
+            - 進入遊戲後直接輸入 `/login <密碼>` 即可登入暢玩！
           {% endapply %}
         </article>
       </div>

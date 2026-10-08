@@ -10,9 +10,9 @@ body {
   background-repeat: no-repeat;
   background-position: center center;
   position: relative;
-  min-height: 460px;
-  padding-top: 95px;
-  padding-bottom: 50px;
+  min-height: 640px;
+  padding-top: 130px;
+  padding-bottom: 85px;
   display: flex;
   flex-direction: column;
   justify-content: center;

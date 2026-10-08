@@ -12,6 +12,18 @@
         background-image: url('{{ home_pic_url }}');
       {% endif %}
     }
+    .layout-top-nav > .hp-wrapper {
+      min-height: 640px;
+      padding-top: 130px;
+      padding-bottom: 85px;
+    }
+    @media (max-width: 768px) {
+      .layout-top-nav > .hp-wrapper {
+        min-height: auto;
+        padding-top: 95px;
+        padding-bottom: 55px;
+      }
+    }
     html {
       scroll-behavior: smooth;
     }
@@ -180,18 +192,18 @@
 
     <div class="container">
       <div class="splash">
-        <div class="mb-5">
+        <div class="mb-5 pb-1">
           <h1 class="splash-head">{{ site_name }}</h1>
-          <p class="splash-subhead mb-3">
+          <p class="splash-subhead mb-4">
             {{ site_description }}
           </p>
 
-          <div class="server-status-banner">
+          <div class="server-status-banner my-3">
             <img src="https://mc8-api.yuaner.tw/banner/" class="img-fluid rounded shadow-sm" alt="伺服器即時狀態" style="max-height: 80px;" onerror="this.parentElement.style.display='none'">
           </div>
         </div>
 
-        <div class="server-ip-badges mb-4">
+        <div class="server-ip-badges mb-5">
           <div class="server-ip-container">
             <!-- 主要網址 -->
             <div class="server-ip-card server-ip-primary" role="button" data-copy="mc8.yuaner.tw" title="點擊複製主要連線網址">
@@ -240,7 +252,7 @@
           </div>
         </div>
 
-        <ul class="list-inline mb-2">
+        <ul class="list-inline mb-4">
           <li class="list-inline-item">
             <a href="{{ url('page/download') }}" class="main-button main-button-download">
               <i class="fas fa-download mr-1"></i>客戶端下載
@@ -259,7 +271,7 @@
           </li>
         </ul>
 
-        <div class="account-sync-hint mt-2">
+        <div class="account-sync-hint mt-3">
           <div class="hint-pill">
             <i class="fas fa-shield-alt text-warning mr-1"></i>
             <span>在此註冊後的帳號密碼，將會同步連動遊戲內登入（<code>/login</code>）</span>

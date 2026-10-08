@@ -2,174 +2,393 @@
 
 {% block title %}客戶端下載專區 - {{ site_name }}{% endblock %}
 
+{% block style %}
+<style>
+  /* 下載頁面專用現代化視覺樣式 */
+  .download-hero-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.92) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    color: #f8fafc;
+    position: relative;
+    overflow: hidden;
+  }
+  .download-hero-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .download-hero-card::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .download-title {
+    font-family: Minecraft, Ubuntu, 'Segoe UI', sans-serif;
+    color: #ffffff;
+    font-size: 2.1rem;
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+    letter-spacing: 0.5px;
+  }
+  .download-badge-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #f1f5f9;
+    margin: 0.25rem 0.35rem;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .download-btn-main {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 1.18rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(2, 132, 199, 0.45);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    text-decoration: none !important;
+    transition: all 0.25s ease-in-out;
+    width: 100%;
+    max-width: 320px;
+  }
+  .download-btn-main:hover {
+    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(2, 132, 199, 0.6);
+  }
+  .download-notice-alert {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.38);
+    border-radius: 10px;
+    color: #fef3c7;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  /* 三大特色卡片 */
+  .feature-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease-in-out;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.2rem 1.6rem;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    border-color: rgba(56, 189, 248, 0.45);
+  }
+  .feature-img-wrap {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+  }
+  .feature-card:hover .feature-img-wrap {
+    transform: scale(1.06);
+  }
+  .feature-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .feature-card h3 {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.65rem;
+  }
+  .feature-card p {
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+  /* 區塊通用標題 */
+  .section-heading-wrap {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .section-heading-wrap h2 {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.7rem;
+    margin-bottom: 0.4rem;
+  }
+  .section-heading-wrap p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  #import-guide, #connection-guide {
+    scroll-margin-top: 85px;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-  <div class="container py-5">
-    <div class="text-center">
-        <h1>📥 官方客戶端下載</h1>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-lg">
-        <div class="card shadow-sm border-0 mb-4">
-          <div class="card-body p-4">
-            <p class="card-text text-muted">
-              內含沉浸式鐵路、重度機械症科技模組。
+  <div class="container py-4">
+
+    <!-- 1. 官方客戶端整合包下載 Hero 看板 -->
+    <div class="card download-hero-card mb-5 border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="row align-items-center">
+          <div class="col-lg-8 mb-4 mb-lg-0">
+            <div class="d-flex align-items-center mb-2">
+              <span class="badge badge-primary px-2 py-1 mr-2"><i class="fas fa-check-circle mr-1"></i>官方推薦整合包</span>
+              <span class="badge badge-dark px-2 py-1">Minecraft 1.21.1 · NeoForge</span>
+            </div>
+            <h1 class="download-title mb-3">📥 官方客戶端整合包下載</h1>
+            <p class="text-light mb-3" style="font-size: 1.05rem; opacity: 0.92;">
+              內含沉浸式鐵路 (Immersive Railroad)、重度機械症 (Create 科技模組群) 與多項客戶端效能優化、正版與離線皮膚同步模組。
             </p>
-            <ul class="list-inline mb-0">
-              <li class="list-inline-item">
-                <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="btn btn-primary btn-lg" target="_blank">
-                  進入我的雲端硬碟
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="container">
-    <div class="text-center">
-      <!--<h1>本伺服器連線特色</h1>
-      <br>
-      <br>-->
-      <div class="container-lg">
-        <div class="row">
-          <div class="col-lg">
-            <i class="fas {{ trans("index.features.first.icon") }} mb-3" aria-hidden="true"></i>
-            <h3>TCP/WebSocket 支援</h3>
-            <p>除了提供Minecraft原生的25565 TCP支援以外，有特別增加WebSocket支援，並掛上Cloudflare代理。詳情請看下述</p>
-          </div>
-          <div class="col-lg">
-            <i class="fas {{ trans("index.features.second.icon") }} mb-3" aria-hidden="true"></i>
-            <h3>IPv6/IPv4 雙線路支援</h3>
-            <p>提供國內穩定的IPv4，與全球性的IPv6支援。詳情請看下述</p>
-          </div>
-          <div class="col-lg">
-            <i class="fas {{ trans("index.features.third.icon") }} mb-3" aria-hidden="true"></i>
-            <h3>Mojang正版/離線登入</h3>
-            <p>本伺服器除了接受Mojang正版以外，也提供安全的傳統密碼方式供離線帳號玩家也能進入</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br>
-  </div>
-
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg">
-        <article class="mb-4 markdown-body p-4 bg-white rounded shadow-sm border">
-          {% apply markdown %}
-            ## 提供多個連線位址，以及相關用途說明
-
-            ### 主要遊戲位址
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8.yuaner.tw" data-tooltip="點選複製"><code>mc8.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 （主網址）
-            - **全功能 IPv6+IPv4 走麥塊原生麥塊TCP直連**
-            - 支援航空學Sable的UDP優化線路
-
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-ws.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-ws.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-warning">CDN</span>  <span class="badge badge-success">IPv6 / IPv4</span> - Yuan MC8 伺服器 WebSocket CDN
-            * **用途：** 國外網路、防火牆較嚴格的校園網推薦
-            - **經過分佈在全世界的Cloudflare代理**，從國外連線的品質應該會比較好。
-            - 走標準網頁協議，可適用於比較嚴格的網路環境（ex. 校園網路）
-            - 網頁協議不支援航空學Sable的UDP線路，將會併入主線路使用。
-
-            ---
-            ### 備用遊戲位址
-            <details>
-              <summary>
-                主要線路異常時使用，點擊展開
-              </summary>
-
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-4.yuaner.tw" data-tooltip="點選複製"><code>mc8-4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 (IPv4 Only)
-            * **用途：** 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
-            * 其他特性都與 `mc8.yuaner.tw` 一致
-
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span>  <span class="badge badge-success">IPv6 / IPv4</span> - Yuan MC8 伺服器 WebSocket 直連
-            * **用途：** 若你是在臺灣，是在網路、防火牆較嚴格的校園網，無法使用TCP直連的情況下使用的
-            - 走標準網頁協議，可適用於比較嚴格的網路環境（ex. 校園網路）
-            - 網頁協議不支援航空學Sable的UDP線路，將會併入主線路使用。
-
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play4.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-secondary">IPv4</span> - Yuan MC8 伺服器 WebSocket IPv4 Only 直連
-            * **用途：** 純IPv4 走麥塊WebSocket線路，若覺得IPv6不穩的話就改用這個
-            * 其他特性都與 `wss://mc8-play.yuaner.tw` 一致
-
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play.yuaner.tw" data-tooltip="點選複製"><code>mc8-play.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> - Yuan MC8 伺服器 TCP 直連
-            * **用途：** SRV轉送機制失效的話，才使用此方式（不建議常態用，因為我隨時都有可能換網址）
-            * 其他特性都與 `mc8.yuaner.tw` 一致
-            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>mc8-play4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> - Yuan MC8 伺服器 TCP IPv4 Only 直連
-            * SRV轉送機制失效的話，才使用此方式（不建議常態用，因為我隨時都有可能換網址）
-            * 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
-            * 其他特性都與 `mc8-4.yuaner.tw` 一致
-
-            </details>
-          {% endapply %}
-        </article>
-
-        <article class="markdown-body p-4 bg-white rounded shadow-sm border">
-          {% apply markdown %}
-            ## 提供多種登入方式
-
-            ### Mojang正版登入
-            * 本伺服器偵測到正版認證成功，將自動放行讓你登入
-            * 會自動將Mojang的正版所設定的皮膚連動
-            * 連動進來後，也會在對應的網站角色、Bluemap地圖網站出現對應的皮膚頭像
-
-            ### 離線帳號傳統密碼登入
-            * 進入伺服器會提示輸入密碼，若沒有正確輸入密碼，將無法做後續任何操作
-            * 玩家皮膚將會與本網站你所設定的皮膚連動
-
-            ### authlib-injector外置密碼登入 （實驗）
-            * 由你的啟動器做好帳號密碼設定
-
-          {% endapply %}
-        </article>
-      </div>
-    </div>
-  </div>
-  <div class="container py-5">
-    <h1 class="text-center">客戶端匯入說明</h1>
-    <div class="row justify-content-center">
-      <div class="col-lg">
-        {# 混合撰寫 Markdown 安裝指南 #}
-        <article class="markdown-body p-4 bg-white rounded shadow-sm border">
-          {% apply markdown %}
-            ### 🛠️ Prism Launcher / Fjord Launcher 匯入步驟指引
-
-            推薦使用 **Prism Launcher** 或 **Fjord Launcher**（繁體中文社群版）進行安裝與遊玩：
-
-            #### 1. 取得整合包檔案
-            - 點選上方按鈕進入雲端硬碟，下載官方整合包壓縮檔（`.zip`）。
-            - **請注意：保持 `.zip` 壓縮檔完整，無須手動解壓縮。**
-
-            #### 2. 匯入至啟動器
-            - 開啟 **Prism Launcher**（或 **Fjord Launcher**）。
-            - 點擊左上角的 **「新增實例」 (Add Instance)**。
-            - 在左側選單切換至 **「從 zip 匯入」 (Import from zip)**。
-            - 點擊「瀏覽」選取剛下載的整合包 `.zip` 檔案（或直接將 `.zip` 檔案拖曳進啟動器主視窗）。
-            - 確認實例名稱後點擊 **「確定」**，等待啟動器自動下載依賴與建置環境。
-
-            <div class="my-3 text-center">
-              <a href="/pages/Screenshot_20261008_101640.png" target="_blank" title="點擊檢視原始高解析度截圖">
-                <img src="/pages/Screenshot_20261008_101640.png" class="img-fluid" alt="PrismLauncher-Import" style="max-width: 680px; width: 100%;">
-              </a>
-              <div class="text-muted small mt-2">（點擊圖片可放大檢視原始截圖）</div>
+            <!-- 規格標籤 -->
+            <div class="d-flex flex-wrap mb-3" style="margin-left: -0.35rem;">
+              <span class="download-badge-tag"><i class="fas fa-cube text-info mr-1"></i> 遊戲版本：1.21.1</span>
+              <span class="download-badge-tag"><i class="fas fa-cogs text-warning mr-1"></i> 模組核心：NeoForge</span>
+              <span class="download-badge-tag"><i class="fas fa-file-archive text-success mr-1"></i> 格式：.zip 實例包 (免解壓)</span>
+              <span class="download-badge-tag"><i class="fas fa-microchip text-danger mr-1"></i> 建議記憶體：6GB ~ 8GB</span>
             </div>
 
+            <!-- 免手動解壓提醒 -->
+            <div class="download-notice-alert">
+              <i class="fas fa-info-circle mr-1 text-warning"></i>
+              <strong>重要提醒：</strong>下載完成後的 <code>.zip</code> 壓縮檔請保持原樣完整，<strong>切勿手動解壓縮</strong>！請直接透過啟動器「從 zip 匯入」實例即可（詳情見下方步驟）。
+            </div>
+          </div>
 
-            #### 3. 配置 Java 與記憶體（關鍵步驟）
-            - 點選剛匯入完成的實例，點擊右側面板的 **「編輯」 (Edit)** 或 **「設定」 (Settings)**。
-            - 切換至 **「Java」** 設定分頁：
-              - **Java 執行版本**：伺服器為 **NeoForge 1.21.1**，請務必選擇 **Java 21**（可點擊「自動偵測」或透過啟動器直接下載安裝 Java 21）。
-              - **記憶體大小**：勾選「覆蓋全域設定」，建議將 **最大記憶體配置 (Maximum memory allocation)** 設定為至少 **4096 MB (4GB)**，建議配置 **6144 MB ~ 8192 MB (6~8GB)** 以確保沉浸式鐵路與大型機械運轉順暢。
-
-            #### 4. 登入帳號並進入伺服器
-            - 點擊啟動器右上角「帳號」管理，新增並選取您的離線帳號或微軟帳號。
-            - **帳號連動**：遊戲內角色名稱請與本網站註冊之角色一致。
-            - 點擊 **「啟動」** 開啟遊戲。進入多人遊戲列表即可看到伺服器（亦可使用上方連線位址手動加入）。
-            - 進入遊戲後直接輸入 `/login <密碼>` 即可登入暢玩！
-          {% endapply %}
-        </article>
+          <div class="col-lg-4 text-center text-lg-right">
+            <div class="download-action-box d-flex flex-column align-items-center align-items-lg-end">
+              <a href="https://file.yuaner.tw/sharing/Hg7WHmcsr" class="download-btn-main mb-3" target="_blank">
+                <i class="fas fa-cloud-download-alt mr-2"></i> 前往官方雲端下載
+              </a>
+              <div class="d-flex justify-content-center justify-content-lg-end flex-wrap">
+                <a href="#import-guide" class="btn btn-outline-light btn-sm mr-2 mb-2">
+                  <i class="fas fa-book-open mr-1"></i> 匯入步驟指引
+                </a>
+                <a href="#connection-guide" class="btn btn-outline-light btn-sm mb-2">
+                  <i class="fas fa-network-wired mr-1"></i> 連線位址說明
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- 2. 伺服器三大核心連線特色 -->
+    <div class="mb-5">
+      <div class="section-heading-wrap">
+        <h2>✨ 伺服器連線與架構特色</h2>
+        <p>提供先進的雙協議代理、全球雙棧線路與全方位帳號皮膚相容支援</p>
+      </div>
+
+      <div class="row">
+        <!-- 特色 1: TCP / WebSocket -->
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-img-wrap">
+              <img src="/images/features/feature-websocket.svg" alt="TCP/WebSocket 支援">
+            </div>
+            <div class="mb-2">
+              <span class="badge badge-primary px-2 py-1">Cloudflare CDN 代理</span>
+            </div>
+            <h3>TCP/WebSocket 雙支援</h3>
+            <p>除了原生的 25565 TCP 連線以外，特別增加 WebSocket (WSMC) 支援並掛上 Cloudflare 全球 CDN 代理，支援校園網路或受限防火牆環境。</p>
+          </div>
+        </div>
+
+        <!-- 特色 2: IPv6 / IPv4 -->
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-img-wrap">
+              <img src="/images/features/feature-dualstack.svg" alt="IPv6/IPv4 雙線路支援">
+            </div>
+            <div class="mb-2">
+              <span class="badge badge-success px-2 py-1">雙棧直連線路</span>
+            </div>
+            <h3>IPv6/IPv4 雙線路支援</h3>
+            <p>提供國內穩定低延遲的 IPv4 直連，並完整支援全球現代化的 IPv6 線路。自動路由最佳路徑，暢快遊玩不卡頓。</p>
+          </div>
+        </div>
+
+        <!-- 特色 3: Mojang / 離線外置 -->
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-img-wrap">
+              <img src="/images/features/feature-auth.svg" alt="Mojang正版/離線登入">
+            </div>
+            <div class="mb-2">
+              <span class="badge badge-warning text-dark px-2 py-1">全方位皮膚同步</span>
+            </div>
+            <h3>Mojang正版 / 離線登入</h3>
+            <p>同時接受微軟 Mojang 正版無感通行，亦提供安全的傳統密碼與外置登入。無論使用哪種方式，網站皮膚與地圖頭像皆能無縫連動！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 客戶端匯入步驟指南（剛下載完整合包的第一步操作） -->
+    <div id="import-guide" class="mb-5">
+      <div class="section-heading-wrap">
+        <h2>🛠️ 客戶端匯入步驟說明</h2>
+        <p>跟隨以下 4 個步驟，輕鬆將整合包匯入啟動器並進入伺服器</p>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg">
+          <article class="markdown-body p-4 bg-white rounded shadow-sm border">
+            {% apply markdown %}
+              ### 🛠️ Prism Launcher / Fjord Launcher 匯入步驟指引
+
+              推薦使用 **Prism Launcher** 或 **Fjord Launcher**（繁體中文社群版）進行安裝與遊玩：
+
+              #### 1. 取得整合包檔案
+              - 點選上方按鈕進入雲端硬碟，下載官方整合包壓縮檔（`.zip`）。
+              - **請注意：保持 `.zip` 壓縮檔完整，無須手動解壓縮。**
+
+              #### 2. 匯入至啟動器
+              - 開啟 **Prism Launcher**（或 **Fjord Launcher**）。
+              - 點擊左上角的 **「新增實例」 (Add Instance)**。
+              - 在左側選單切換至 **「從 zip 匯入」 (Import from zip)**。
+              - 點擊「瀏覽」選取剛下載的整合包 `.zip` 檔案（或直接將 `.zip` 檔案拖曳進啟動器主視窗）。
+              - 確認實例名稱後點擊 **「確定」**，等待啟動器自動下載依賴與建置環境。
+
+              <div class="my-3 text-center">
+                <a href="/pages/Screenshot_20261008_101640.png" target="_blank" title="點擊檢視原始高解析度截圖">
+                  <img src="/pages/Screenshot_20261008_101640.png" class="img-fluid" alt="PrismLauncher-Import" style="max-width: 680px; width: 100%;">
+                </a>
+                <div class="text-muted small mt-2">（點擊圖片可放大檢視原始截圖）</div>
+              </div>
+
+              #### 3. 配置 Java 與記憶體（關鍵步驟）
+              - 點選剛匯入完成的實例，點擊右側面板的 **「編輯」 (Edit)** 或 **「設定」 (Settings)**。
+              - 切換至 **「Java」** 設定分頁：
+                - **Java 執行版本**：伺服器為 **NeoForge 1.21.1**，請務必選擇 **Java 21**（可點擊「自動偵測」或透過啟動器直接下載安裝 Java 21）。
+                - **記憶體大小**：勾選「覆蓋全域設定」，建議將 **最大記憶體配置 (Maximum memory allocation)** 設定為至少 **4096 MB (4GB)**，建議配置 **6144 MB ~ 8192 MB (6~8GB)** 以確保沉浸式鐵路與大型機械運轉順暢。
+
+              #### 4. 登入帳號並進入伺服器
+              - 點擊啟動器右上角「帳號」管理，新增並選取您的離線帳號或微軟帳號。
+              - **帳號連動**：遊戲內角色名稱請與本網站註冊之角色一致。
+              - 點擊 **「啟動」** 開啟遊戲。進入多人遊戲列表即可看到伺服器（亦可使用下方連線位址手動加入）。
+              - 進入遊戲後直接輸入 `/login <密碼>` 即可登入暢玩！
+            {% endapply %}
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 伺服器連線位址與登入機制 -->
+    <div id="connection-guide" class="mb-5">
+      <div class="section-heading-wrap">
+        <h2>🌐 伺服器連線位址與登入方式</h2>
+        <p>各線路用途說明與帳號密碼登入指引</p>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg">
+          <article class="mb-4 markdown-body p-4 bg-white rounded shadow-sm border">
+            {% apply markdown %}
+              ## 提供多個連線位址，以及相關用途說明
+
+              ### 主要遊戲位址
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8.yuaner.tw" data-tooltip="點選複製"><code>mc8.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 （主網址）
+              - **全功能 IPv6+IPv4 走麥塊原生麥塊TCP直連**
+              - 支援航空學Sable的UDP優化線路
+
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-ws.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-ws.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-warning">CDN</span>  <span class="badge badge-success">IPv6 / IPv4</span> - Yuan MC8 伺服器 WebSocket CDN
+              * **用途：** 國外網路、防火牆較嚴格的校園網推薦
+              - **經過分佈在全世界的Cloudflare代理**，從國外連線的品質應該會比較好。
+              - 走標準網頁協議，可適用於比較嚴格的網路環境（ex. 校園網路）
+              - 網頁協議不支援航空學Sable的UDP線路，將會併入主線路使用。
+
+              ---
+              ### 備用遊戲位址
+              <details>
+                <summary>
+                  主要線路異常時使用，點擊展開
+                </summary>
+
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-4.yuaner.tw" data-tooltip="點選複製"><code>mc8-4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 (IPv4 Only)
+              * **用途：** 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
+              * 其他特性都與 `mc8.yuaner.tw` 一致
+
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span>  <span class="badge badge-success">IPv6 / IPv4</span> - Yuan MC8 伺服器 WebSocket 直連
+              * **用途：** 若你是在臺灣，是在網路、防火牆較嚴格的校園網，無法使用TCP直連的情況下使用的
+              - 走標準網頁協議，可適用於比較嚴格的網路環境（ex. 校園網路）
+              - 網頁協議不支援航空學Sable的UDP線路，將會併入主線路使用。
+
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play4.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-secondary">IPv4</span> - Yuan MC8 伺服器 WebSocket IPv4 Only 直連
+              * **用途：** 純IPv4 走麥塊WebSocket線路，若覺得IPv6不穩的話就改用這個
+              * 其他特性都與 `wss://mc8-play.yuaner.tw` 一致
+
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play.yuaner.tw" data-tooltip="點選複製"><code>mc8-play.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> - Yuan MC8 伺服器 TCP 直連
+              * **用途：** SRV轉送機制失效的話，才使用此方式（不建議常態用，因為我隨時都有可能換網址）
+              * 其他特性都與 `mc8.yuaner.tw` 一致
+              #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>mc8-play4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> - Yuan MC8 伺服器 TCP IPv4 Only 直連
+              * SRV轉送機制失效的話，才使用此方式（不建議常態用，因為我隨時都有可能換網址）
+              * 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
+              * 其他特性都與 `mc8-4.yuaner.tw` 一致
+
+              </details>
+            {% endapply %}
+          </article>
+
+          <article class="markdown-body p-4 bg-white rounded shadow-sm border">
+            {% apply markdown %}
+              ## 提供多種登入方式
+
+              ### Mojang正版登入
+              * 本伺服器偵測到正版認證成功，將自動放行讓你登入
+              * 會自動將Mojang的正版所設定的皮膚連動
+              * 連動進來後，也會在對應的網站角色、Bluemap地圖網站出現對應的皮膚頭像
+
+              ### 離線帳號傳統密碼登入
+              * 進入伺服器會提示輸入密碼，若沒有正確輸入密碼，將無法做後續任何操作
+              * 玩家皮膚將會與本網站你所設定的皮膚連動
+
+              ### authlib-injector外置密碼登入 （實驗）
+              * 由你的啟動器做好帳號密碼設定
+
+            {% endapply %}
+          </article>
+        </div>
+      </div>
+    </div>
+
   </div>
 {% endblock %}

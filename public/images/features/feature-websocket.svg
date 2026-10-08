@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- 背景漸層 -->
+    <linearGradient id="bg-ws" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b132b"/>
+      <stop offset="100%" stop-color="#1c2541"/>
+    </linearGradient>
+    <!-- 雲端 CDN 橙天藍漸層 -->
+    <linearGradient id="cloud-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <!-- TCP 翠綠漸層 -->
+    <linearGradient id="tcp-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <!-- WebSocket 橙光漸層 (象徵 Cloudflare) -->
+    <linearGradient id="cf-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <!-- 柔和陰影 -->
+    <filter id="shadow-ws" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- 圓角背景與外框 -->
+  <rect width="128" height="128" rx="28" fill="url(#bg-ws)"/>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="2"/>
+
+  <!-- 背景科技光環裝飾 -->
+  <circle cx="64" cy="64" r="44" fill="none" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 4" stroke-width="1.5"/>
+  <circle cx="64" cy="64" r="32" fill="none" stroke="rgba(56, 189, 248, 0.1)" stroke-width="1"/>
+
+  <!-- 雲端 CDN 造型 (Cloudflare / Web) -->
+  <g filter="url(#shadow-ws)">
+    <!-- 雲朵底座 -->
+    <path d="M78 44 C84 44 89 48 90 54 C95 55 99 59 99 64 C99 70 94 75 88 75 L42 75 C35 75 30 70 30 63 C30 57 34 52 40 51 C42 43 49 37 58 37 C66 37 73 40 76 46 Z" 
+          fill="url(#cloud-grad)" opacity="0.95"/>
+    <path d="M78 44 C84 44 89 48 90 54 C95 55 99 59 99 64 C99 70 94 75 88 75 L42 75 C35 75 30 70 30 63 C30 57 34 52 40 51 C42 43 49 37 58 37 C66 37 73 40 76 46 Z" 
+          fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  </g>
+
+  <!-- 雙協議信號傳輸箭頭 (TCP 綠 + WSS 橙) -->
+  <!-- TCP 直連 (下方綠色箭頭光柱) -->
+  <g filter="url(#shadow-ws)">
+    <!-- 左側 TCP 節點 -->
+    <rect x="36" y="86" width="22" height="14" rx="4" fill="url(#tcp-grad)"/>
+    <text x="47" y="96.5" font-family="'Consolas', monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">TCP</text>
+    
+    <!-- 右側 WS/CDN 節點 -->
+    <rect x="70" y="86" width="22" height="14" rx="4" fill="url(#cf-orange)"/>
+    <text x="81" y="96.5" font-family="'Consolas', monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">WSS</text>
+
+    <!-- 連接流光線條 -->
+    <path d="M47 86 L47 75" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+    <path d="M81 86 L81 75" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+  </g>
+
+  <!-- 中央閃電訊號 (代表極速低延遲穿透) -->
+  <polygon points="64,48 57,63 63,63 61,74 71,59 65,59" fill="#fde047" filter="url(#shadow-ws)"/>
+</svg>

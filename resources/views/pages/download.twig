@@ -22,6 +22,47 @@
           </div>
         </div>
 
+        <article class="mb-4 markdown-body p-4 bg-white rounded shadow-sm border">
+          {% apply markdown %}
+            ## 提供多個連線位址，以及相關用途說明
+
+            ### 主要遊戲位址
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8.yuaner.tw" data-tooltip="點選複製"><code>mc8.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 （主網址）
+            - **全功能 IPv6+IPv4 走麥塊原生麥塊TCP直連**
+            - 支援航空學Sable的UDP優化線路
+
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-ws.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-ws.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-warning">CDN</span>  <span class="badge badge-success">IPv6 / IPv4</span> - Yuan MC8 伺服器 WebSocket CDN
+            * **用途：** 國外網路、防火牆較嚴格的校園網推薦
+            - **經過分佈在全世界的Cloudflare代理**，從國外連線的品質應該會比較好。
+            - 走標準網頁協議，可適用於比較嚴格的網路環境（ex. 校園網路）
+            - 網頁協議不支援航空學Sable的UDP線路，將會併入主線路使用。
+
+            ---
+            ### 備用遊戲位址
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-4.yuaner.tw" data-tooltip="點選複製"><code>mc8-4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span> - Yuan MC8 伺服器 (IPv4 Only)
+            * **用途：** 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
+            * 其他特性都與 `mc8.yuaner.tw` 一致
+
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span>  <span class="badge badge-success">IPv6 / IPv4</span> - Yuan MC8 伺服器 WebSocket 直連
+            * **用途：** 若你是在臺灣，是在網路、防火牆較嚴格的校園網，無法使用TCP直連的情況下使用的
+            - 走標準網頁協議，可適用於比較嚴格的網路環境（ex. 校園網路）
+            - 網頁協議不支援航空學Sable的UDP線路，將會併入主線路使用。
+
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play4.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-secondary">IPv4</span> - Yuan MC8 伺服器 WebSocket IPv4 Only 直連
+            * **用途：** 純IPv4 走麥塊WebSocket線路，若覺得IPv6不穩的話就改用這個
+            * 其他特性都與 `wss://mc8-play.yuaner.tw` 一致
+
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play.yuaner.tw" data-tooltip="點選複製"><code>mc8-play.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> - Yuan MC8 伺服器 TCP 直連
+            * **用途：** SRV轉送機制失效的話，才使用此方式（不建議常態用，因為我隨時都有可能換網址）
+            * 其他特性都與 `mc8.yuaner.tw` 一致
+            #### <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>mc8-play4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> - Yuan MC8 伺服器 TCP IPv4 Only 直連
+            * SRV轉送機制失效的話，才使用此方式（不建議常態用，因為我隨時都有可能換網址）
+            * 純IPv4 走麥塊原生TCP直連，若覺得IPv6不穩的話就改用這個
+            * 其他特性都與 `mc8-4.yuaner.tw` 一致
+
+          {% endapply %}
+        </article>
+
         {# 混合撰寫 Markdown 安裝指南 #}
         <article class="markdown-body p-4 bg-white rounded shadow-sm border">
           {% apply markdown %}

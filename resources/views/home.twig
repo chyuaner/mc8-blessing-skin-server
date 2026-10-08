@@ -239,6 +239,24 @@
     .copy-ip-link.copied::before {
       border-top-color: #28a745;
     }
+
+    /* 備用位址次項目折疊樣式 */
+    .backup-server-addresses summary {
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+    }
+    .backup-server-addresses summary::-webkit-details-marker,
+    .backup-server-addresses summary::marker {
+      display: none;
+    }
+    .backup-server-addresses .backup-arrow {
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+    .backup-server-addresses[open] .backup-arrow {
+      transform: rotate(180deg);
+    }
   </style>
 {% endblock %}
 
@@ -356,12 +374,19 @@
             * **主要遊戲位址**：
                 * <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8.yuaner.tw" data-tooltip="點選複製"><code>mc8.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span>
                 * <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-ws.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-ws.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-warning">CDN</span>  <span class="badge badge-success">IPv6 / IPv4</span>
-            * **備用遊戲位址**：
-                * <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-4.yuaner.tw" data-tooltip="點選複製"><code>mc8-4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span>
-                * <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play.yuaner.tw:443" data-tooltip="點選複製"><code>wss://mc8-play.yuaner.tw:443</code></a> <span class="badge badge-primary">WebSocket</span>  <span class="badge badge-success">IPv6 / IPv4</span>
-                * <a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play4.yuaner.tw:443" data-tooltip="點選複製"><code>wss://mc8-play4.yuaner.tw:443</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-secondary">IPv4</span>
-                * <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play.yuaner.tw:25565" data-tooltip="點選複製"><code>mc8-play.yuaner.tw:25565</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span>
-                * <a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play4.yuaner.tw:25565" data-tooltip="點選複製"><code>mc8-play4.yuaner.tw:25565</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span>
+                * <details class="backup-server-addresses" style="margin-top: 4px;">
+                    <summary class="text-secondary" style="cursor: pointer; outline: none; user-select: none;">
+                      <span><strong>備用遊戲位址</strong> <small class="text-muted">（主要線路異常時使用，點擊展開 <span class="backup-arrow">▾</span>）</small></span>
+                    </summary>
+                    <ul class="list-unstyled mt-2 pl-3 border-left" style="margin-left: 2px;">
+                      <li class="mb-1"><a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-4.yuaner.tw" data-tooltip="點選複製"><code>mc8-4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span> <span class="badge badge-dark">SRV</span></li>
+                      <li class="mb-1"><a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span>  <span class="badge badge-success">IPv6 / IPv4</span></li>
+                      <li class="mb-1"><a href="javascript:void(0);" class="copy-ip-link" data-copy="wss://mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>wss://mc8-play4.yuaner.tw</code></a> <span class="badge badge-primary">WebSocket</span> <span class="badge badge-secondary">IPv4</span></li>
+                      <li class="mb-1"><a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play.yuaner.tw" data-tooltip="點選複製"><code>mc8-play.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-success">IPv6 / IPv4</span> <span class="badge badge-info">Sable(UDP)</span></li>
+                      <li><a href="javascript:void(0);" class="copy-ip-link" data-copy="mc8-play4.yuaner.tw" data-tooltip="點選複製"><code>mc8-play4.yuaner.tw</code></a> <span class="badge badge-success">TCP</span> <span class="badge badge-secondary">IPv4</span> <span class="badge badge-info">Sable(UDP)</span></li>
+                    </ul>
+                  </details>
+
             * **玩家人數**：<span id="mc-live-players">最多20人</span>
           {% endapply %}
           <ul id="mc-live-status-list" class="mb-0" style="display: none; margin-top: -8px;">

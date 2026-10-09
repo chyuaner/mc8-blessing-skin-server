@@ -13,13 +13,16 @@ class GenerateAutoindexCommand extends Command
 
     public function handle(Filesystem $filesystem)
     {
+        // 確保 CLI 環境下能吃對 Blessing Skin 後台設定的網站語言 (預設為繁體中文或讀取資料庫選項)
+        app()->setLocale(option('locale') ?: config('app.locale'));
+
         $this->info('Generating Nginx autoindex templates from base.twig...');
 
         // 1. 渲染包含完整 base.twig 的視圖
         $html = view('front.dl')->render();
 
         // 2. 處理黃圈：將登入/會員中心按鈕替換為「回伺服器首頁」
-        $homeLink = '<li class="nav-item ml-lg-2"><a class="nav-link" href="/"><i class="fas fa-house mr-1"></i>回伺服器首頁</a></li>';
+        $homeLink = '<li class="nav-item ml-lg-2"><a class="nav-link nav-btn-login" href="/"><i class="fas fa-house mr-1"></i>回伺服器首頁</a></li>';
         $html = preg_replace(
             '/<li class="nav-item ml-lg-2">\s*<a class="nav-link nav-btn-login"[\s\S]*?<\/li>/u',
             $homeLink,

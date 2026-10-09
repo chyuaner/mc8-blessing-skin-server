@@ -224,6 +224,18 @@ body.dl-body .front-content,
 .table-files tbody tr {
   border-bottom: 1px solid #f1f5f9;
   transition: background-color 0.15s ease;
+  position: relative;
+}
+
+/* 擴大連結點擊範圍至整列 (所有裝置) */
+.file-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
 }
 
 .table-files tbody tr:hover {
@@ -298,6 +310,8 @@ body.dl-body .front-content,
   margin-left: 0.35rem;
   text-decoration: none !important;
   cursor: pointer;
+  position: relative;
+  z-index: 2; /* 確保按鈕層級高於整列連結，仍可被點擊 */
 }
 
 .file-action-btn:hover {
@@ -399,4 +413,101 @@ body.js-ready #raw-listing-container {
 
 body.js-ready #enhanced-listing-container {
   display: block !important;
+}
+
+/* ==============================================================================
+   手機版響應式優化 (Mobile Responsive Optimizations)
+   ============================================================================== */
+@media (max-width: 768px) {
+  /* 工具列優化 */
+  .explorer-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .breadcrumb-custom {
+    margin-bottom: 0.5rem;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  /* 摘要條優化 */
+  .explorer-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* 將表格轉為卡片狀列表 */
+  .table-files thead {
+    display: none;
+  }
+
+  .table-files,
+  .table-files tbody,
+  .table-files tr,
+  .table-files td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-files tbody tr {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .table-files td {
+    padding: 0.2rem 0;
+    border: none;
+    text-align: left !important;
+  }
+
+  /* 檔案名稱 */
+  .table-files td:nth-child(1) {
+    margin-bottom: 0.3rem;
+  }
+
+  .file-link {
+    align-items: flex-start;
+  }
+
+  .file-icon {
+    margin-top: 0.2rem;
+    margin-right: 0.6rem;
+  }
+
+  .file-badge {
+    margin-top: 0.15rem;
+  }
+
+  /* 大小與日期 */
+  .table-files td:nth-child(2),
+  .table-files td:nth-child(3) {
+    display: inline-block;
+    width: auto;
+    font-size: 0.85rem;
+    margin-right: 1.25rem;
+  }
+
+  .table-files td:nth-child(2)::before {
+    content: '大小: ';
+    color: #94a3b8;
+  }
+
+  .table-files td:nth-child(3)::before {
+    content: '日期: ';
+    color: #94a3b8;
+  }
+
+  /* 針對返回上一層隱藏大小與日期 */
+  .table-files tr[data-name^='..'] td:nth-child(2),
+  .table-files tr[data-name^='..'] td:nth-child(3) {
+    display: none;
+  }
+
+  /* 手機版隱藏操作按鈕，改為點擊整列 */
+  .table-files td:nth-child(4) {
+    display: none !important;
+  }
 }

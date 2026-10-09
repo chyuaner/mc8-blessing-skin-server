@@ -57,6 +57,17 @@ class GenerateAutoindexCommand extends Command
             );
         }
 
+        $markedFile = public_path('autoindex/marked.js');
+        if ($filesystem->exists($markedFile)) {
+            $markedContent = $filesystem->get($markedFile);
+            $inlineMarked = "<script id=\"marked-script\">\n{$markedContent}\n</script>";
+            $html = preg_replace_callback(
+                '/<script[^>]+src=["\'][^"\']*marked\.js["\'][^>]*><\/script>/i',
+                fn() => $inlineMarked,
+                $html
+            );
+        }
+
         // 5. 根據切分標記拆分出 header.html 與 footer.html
         $splitMarker = '<!-- ###NGINX_AUTOINDEX_CONTENT_SPLIT### -->';
         if (!str_contains($html, $splitMarker)) {
@@ -90,6 +101,9 @@ class GenerateAutoindexCommand extends Command
         if ($filesystem->exists($jsFile)) {
             $filesystem->copy($jsFile, $legacyPath.'/dl-theme.js');
         }
+        if ($filesystem->exists($markedFile)) {
+            $filesystem->copy($markedFile, $legacyPath.'/marked.js');
+        }
         $nginxConf = public_path('autoindex/nginx.conf.example');
         if ($filesystem->exists($nginxConf)) {
             $filesystem->copy($nginxConf, $legacyPath.'/nginx.conf.example');
@@ -101,6 +115,7 @@ class GenerateAutoindexCommand extends Command
         $this->info("✓ Mirrored:  {$legacyPath}/footer.html (Self-contained inline CSS/JS)");
         $this->info("✓ Mirrored:  {$legacyPath}/dl-theme.css");
         $this->info("✓ Mirrored:  {$legacyPath}/dl-theme.js");
+        $this->info("✓ Mirrored:  {$legacyPath}/marked.js");
         $this->info('Templates successfully generated and ready for Nginx add_before_body / add_after_body!');
 
         return 0;

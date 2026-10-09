@@ -1,0 +1,71 @@
+{% extends 'front.base' %}
+
+{% block title %}檔案下載站 - {{ site_name }}{% endblock %}
+
+{% block body_class %}dl-body{% endblock %}
+
+{% block style %}
+  <link href="/autoindex/dl-theme.css" rel="stylesheet">
+{% endblock %}
+
+{% block hero %}
+  {{ include('dl.hero', ignore_missing = true) }}
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4">
+    <div class="explorer-card">
+      <!-- 頂部工具列：麵包屑導航 + 即時過濾搜尋框 -->
+      <div class="explorer-toolbar">
+        <ul class="breadcrumb-custom" id="dl-breadcrumbs">
+          <li><a href="/dl/"><i class="fas fa-server mr-1"></i>根目錄 (dl)</a></li>
+        </ul>
+        <div class="search-box">
+          <i class="fas fa-magnifying-glass search-icon"></i>
+          <input type="text" id="dl-search-input" placeholder="即時篩選檔案 / 資料夾..." autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Nginx 原生 Autoindex 注入點 -->
+      <div id="raw-listing-container">
+<!-- ###NGINX_AUTOINDEX_CONTENT_SPLIT### -->
+      </div><!-- /#raw-listing-container -->
+
+      <!-- 現代化公開下載站表格區 -->
+      <div id="enhanced-listing-container" class="table-responsive" style="display: none;">
+        <table class="table table-hover table-files mb-0" id="files-table">
+          <thead>
+            <tr>
+              <th style="min-width: 280px;"><i class="fas fa-file-lines mr-2"></i>檔案名稱</th>
+              <th style="width: 140px; text-align: right;"><i class="fas fa-hard-drive mr-2"></i>檔案大小</th>
+              <th style="width: 180px; text-align: center;"><i class="fas fa-clock mr-2"></i>修改時間</th>
+              <th style="width: 170px; text-align: center;"><i class="fas fa-wrench mr-2"></i>操作</th>
+            </tr>
+          </thead>
+          <tbody id="files-tbody"></tbody>
+        </table>
+
+        <!-- 搜尋無結果提示 -->
+        <div id="empty-state" class="empty-files" style="display: none;">
+          <i class="fas fa-folder-open fa-3x mb-3 text-muted"></i>
+          <p class="mb-0 text-muted">當前目錄下沒有符合搜尋條件的檔案或資料夾</p>
+        </div>
+
+        <!-- 狀態摘要條 -->
+        <div id="listing-summary" class="explorer-summary">
+          <span id="summary-left">正在讀取目錄項目...</span>
+          <span id="summary-right"><i class="fas fa-shield-check mr-1 text-success"></i>靜態鏡像直傳</span>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <!-- 複製直鏈成功吐司通知 (Toast) -->
+  <div id="dl-toast" class="toast-notification">
+    <i class="fas fa-check-circle text-success mr-2"></i>
+    <span id="toast-msg">已成功複製下載直鏈至剪貼簿！</span>
+  </div>
+  <script src="/autoindex/dl-theme.js"></script>
+{% endblock %}

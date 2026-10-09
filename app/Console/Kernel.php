@@ -14,5 +14,6 @@ class Kernel extends ConsoleKernel
         Commands\PluginEnableCommand::class,
         Commands\SaltRandomCommand::class,
         Commands\UpdateCommand::class,
+        Commands\GenerateAutoindexCommand::class,
     ];
 }

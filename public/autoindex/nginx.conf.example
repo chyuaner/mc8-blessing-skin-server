@@ -1,0 +1,56 @@
+# ==============================================================================
+# Nginx 配置範例：MC8 公開下載站 (https://mc8.yuaner.tw/dl/)
+# 支援：autoindex、add_before_body、add_after_body、CDN 快取優化、斷點續傳 (HTTP Range)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. 放在 http { ... } 區塊內 (或 server 外部)：
+# ------------------------------------------------------------------------------
+# 雲端空間 CDN 快取標頭判斷：
+# 實體大檔案（模組包、jar、投影檔、圖片）在 CDN 邊緣快取 7 天；目錄頁面則不快取以即時更新
+map $request_uri $dl_cache_control {
+    ~*\.(zip|jar|7z|tar|gz|xz|rar|exe|msi|bat|sh|litematic|schem|schematic|mcpack|mcworld|png|webp|jpg|jpeg|gif|json|toml|cfg|txt|pdf)(\?.*)?$ "public, max-age=604800, immutable";
+    default "no-cache, must-revalidate";
+}
+
+# ------------------------------------------------------------------------------
+# 2. 放在 server { ... } 區塊內：
+# ------------------------------------------------------------------------------
+
+# 根路徑重定向
+location = /dl {
+    return 301 /dl/;
+}
+
+# 主題目錄保護（僅限 Nginx 內部 subrequest 讀取，禁止外部直接遍歷）
+location ^~ /dl/.theme/ {
+    alias /opt/drive/.theme/;
+    internal;
+}
+
+# 公開下載站核心目錄 (Nginx 零後端原生效能)
+location ^~ /dl/ {
+    alias /opt/drive/;
+
+    # Linux 內核零拷貝傳輸最佳化
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    send_timeout 3600;
+
+    # 啟用目錄瀏覽
+    autoindex on;
+    autoindex_exact_size off;  # 輸出友善大小格式 (如 12.5M, 500K)
+    autoindex_localtime on;   # 使用本地伺服器時區輸出時間
+    charset utf-8;             # 避免繁體中文檔名亂碼
+
+    # 注入主題頁首與頁尾
+    add_before_body /dl/.theme/header.html;
+    add_after_body  /dl/.theme/footer.html;
+
+    # CDN 快取控制標頭 (由 map 動態分流)
+    add_header Cache-Control $dl_cache_control;
+
+    # 支援斷點續傳 (多線程下載器 / 瀏覽器續傳)
+    add_header Accept-Ranges bytes;
+}

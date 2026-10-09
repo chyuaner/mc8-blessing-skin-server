@@ -65,6 +65,7 @@
   },
   "scripts": {
     "test": "phpunit",
+    "generate:autoindex": "@php artisan dl:generate",
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
       "@php artisan package:discover"

@@ -18,7 +18,8 @@
     "type:check": "tsc -p . --noEmit && tsc -p ./resources/assets/tests --noEmit",
     "test": "jest",
     "build:urls": "ts-node tools/generateUrls.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "node -e \"require('fs').copyFileSync('node_modules/marked/lib/marked.umd.js', 'public/autoindex/marked.js')\""
   },
   "dependencies": {
     "@emotion/react": "^11.0.0",
@@ -37,6 +38,7 @@
     "immer": "^7.0.4",
     "jquery": "^3.6.0",
     "lodash.debounce": "^4.0.8",
+    "marked": "^18.1.0",
     "nanoid": "^3.1.9",
     "prompts": "^2.4.0",
     "react": "^17.0.1",

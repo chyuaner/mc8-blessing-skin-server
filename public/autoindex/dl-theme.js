@@ -312,6 +312,9 @@
     // 更新摘要
     updateSummary(items.length, dirCount, fileCount)
 
+    // 檢查並載入 README 檔案
+    loadReadme(items)
+
     // 標記解析完成，切換顯示現代化表格
     document.body.classList.add(
       'js-ready',
@@ -426,6 +429,56 @@
         "'": '&#39;',
       }[m]
     })
+  }
+
+  // 6. 讀取 README 檔案
+  function loadReadme(items) {
+    // 找出檔名為 readme.md 或類似名稱的檔案 (不分大小寫)
+    var readmeItem = items.find(function (item) {
+      if (item.isDir) return false
+      var name = item.name.toLowerCase()
+      // 支援 readme.md, readme.txt, reaame.md 等常見拼寫
+      return (
+        name === 'readme.md' || name === 'readme.txt' || name === 'reaame.md'
+      )
+    })
+
+    if (readmeItem) {
+      var container = document.getElementById('readme-container')
+      var content = document.getElementById('readme-content')
+      var filename = document.getElementById('readme-filename')
+
+      if (container && content) {
+        container.style.display = 'block'
+        if (filename) filename.textContent = readmeItem.name
+
+        // 使用絕對下載直鏈，避免路徑解析問題
+        var fetchUrl = new URL(readmeItem.href, window.location.href).href
+
+        fetch(fetchUrl)
+          .then(function (res) {
+            if (!res.ok) throw new Error('Network response was not ok')
+            return res.text()
+          })
+          .then(function (text) {
+            if (typeof marked !== 'undefined') {
+              // 若引入了 marked.js，轉為 HTML
+              content.innerHTML = marked.parse(text)
+            } else {
+              // 否則純文字顯示
+              content.innerHTML =
+                '<pre style="white-space: pre-wrap; font-family: inherit; background: transparent; border: none; padding: 0; margin: 0;">' +
+                escapeHtml(text) +
+                '</pre>'
+            }
+          })
+          .catch(function (err) {
+            content.innerHTML =
+              '<div class="text-danger"><i class="fas fa-exclamation-triangle mr-2"></i>無法讀取文件內容。</div>'
+            console.error('Failed to load README:', err)
+          })
+      }
+    }
   }
 
   // 啟動解析 (相容同步與異步載入)

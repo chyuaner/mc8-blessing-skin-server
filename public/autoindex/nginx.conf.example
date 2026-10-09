@@ -22,9 +22,8 @@ location = /dl {
     return 301 /dl/;
 }
 
-# 主題目錄保護（僅限 Nginx 內部 subrequest 讀取，禁止外部直接遍歷）
-location ^~ /dl/.theme/ {
-    alias /opt/drive/.theme/;
+# 主題目錄保護（保護 Laravel public/autoindex 下的靜態產物，僅允許 Nginx 內部 subrequest 讀取）
+location ^~ /autoindex/ {
     internal;
 }
 
@@ -44,9 +43,9 @@ location ^~ /dl/ {
     autoindex_localtime on;   # 使用本地伺服器時區輸出時間
     charset utf-8;             # 避免繁體中文檔名亂碼
 
-    # 注入主題頁首與頁尾
-    add_before_body /dl/.theme/header.html;
-    add_after_body  /dl/.theme/footer.html;
+    # 注入主題頁首與頁尾 (對應到 Laravel 專案的 public/autoindex 目錄)
+    add_before_body /autoindex/header.html;
+    add_after_body  /autoindex/footer.html;
 
     # CDN 快取控制標頭 (由 map 動態分流)
     add_header Cache-Control $dl_cache_control;

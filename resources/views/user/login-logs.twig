@@ -1,0 +1,69 @@
+{% extends 'user.base' %}
+
+{% block title %}登入紀錄{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <form class="form-inline" method="GET" action="{{ route('user.login-logs') }}">
+        <div class="form-group mb-2">
+          <label for="serverSelect" class="sr-only">伺服器</label>
+          <select class="form-control" id="serverSelect" name="server" onchange="this.form.submit()">
+            <option value="all" {% if currentServer == 'all' %}selected{% endif %}>全部伺服器</option>
+            {% for value, name in serverMapping %}
+              <option value="{{ value }}" {% if currentServer == value %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+            {% if currentServer != 'all' and serverMapping[currentServer] is not defined %}
+              <option value="{{ currentServer }}" selected>{{ currentServer }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="card-body p-0 table-responsive">
+      <table class="table table-striped text-nowrap">
+        <thead>
+          <tr>
+            <th>角色名</th>
+            {% if currentServer == 'all' %}
+              <th>伺服器名</th>
+            {% endif %}
+            <th>登入時間</th>
+            <th>遊戲時間</th>
+            <th>登入 IP</th>
+            <th>登入方式</th>
+            <th>連線方式</th>
+            <th>UUID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log.username }}</td>
+              {% if currentServer == 'all' %}
+                <td>{{ serverMapping[log.server_name] ?? log.server_name }}</td>
+              {% endif %}
+              <td>{{ log.login_time_formatted }}</td>
+              <td>{{ log.play_time }}</td>
+              <td>{{ log.ip }}</td>
+              <td>{{ log.login_method_display }}</td>
+              <td>{{ log.conn_channel_display }}</td>
+              <td>{{ log.uuid }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="{% if currentServer == 'all' %}8{% else %}7{% endif %}" class="text-center">
+                目前沒有登入紀錄
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <div class="float-right">
+        {{ logs.withQueryString().links()|raw }}
+      </div>
+    </div>
+  </div>
+{% endblock %}

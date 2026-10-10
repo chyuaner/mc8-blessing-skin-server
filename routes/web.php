@@ -57,6 +57,7 @@ Route::prefix('user')
         Route::post('sign', 'UserController@sign')->name('sign');
 
         Route::get('reports', 'ReportController@track')->name('list');
+        Route::get('login-logs', 'LoginLogsController@index')->name('login-logs');
 
         Route::prefix('profile')->name('profile.')->group(function () {
             Route::get('', 'UserController@profile')->name('view');

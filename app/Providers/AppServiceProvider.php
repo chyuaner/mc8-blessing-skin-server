@@ -22,6 +22,14 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         $this->configureUrlGenerator($request);
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('login_logs')) {
+            \App\Services\Hook::addMenuItem('user', 1, [
+                'title' => '遊戲登入紀錄',
+                'link'  => 'user/login-logs',
+                'icon'  => 'fa-history'
+            ]);
+        }
     }
 
     /**

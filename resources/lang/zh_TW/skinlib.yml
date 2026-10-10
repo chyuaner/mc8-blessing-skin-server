@@ -26,5 +26,5 @@ model:
 no-permission: 您沒有權限操作此材質。
 non-existent: 無此材質。
 report:
-  duplicate: 您已成功舉報此材質。管理員將速即審閲。您可以同時在“用戶中心”追蹤舉報進展。
+  duplicate: 您已成功舉報此材質。管理員將速即審閲。您可以同時在“玩家中心”追蹤舉報進展。
   success: 感謝您的舉報！管理員將速即審閲。

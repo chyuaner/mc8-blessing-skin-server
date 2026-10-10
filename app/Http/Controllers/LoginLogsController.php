@@ -12,6 +12,7 @@ class LoginLogsController extends Controller
     // Server name mapping
     protected $serverMapping = [
         'mechanomania:25565' => 'MC8 重度機械症 鐵路世界',
+        'server2:25565' => 'Barian主服 落幕曲',
         // Add more servers here, e.g.
         // 'other_server:25565' => 'Other Server',
     ];

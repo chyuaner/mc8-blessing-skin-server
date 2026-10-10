@@ -32,8 +32,11 @@ class UserMenuComposer
 
         $menuItems = [
             ['label' => trans('general.user-center'), 'link' => route('user.home')],
-            ['label' => trans('general.profile'), 'link' => route('user.profile.view')],
         ];
+        if (\Illuminate\Support\Facades\Schema::hasTable('login_logs')) {
+            $menuItems[] = ['label' => '遊戲登入紀錄', 'link' => route('user.login-logs')];
+        }
+        $menuItems[] = ['label' => trans('general.profile'), 'link' => route('user.profile.view')];
         if ($user->isAdmin()) {
             array_push(
                 $menuItems,

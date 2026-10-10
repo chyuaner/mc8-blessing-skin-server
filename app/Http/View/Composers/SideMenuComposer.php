@@ -29,6 +29,13 @@ class SideMenuComposer
         $menu = config('menu');
         switch ($type) {
             case 'user':
+                if (\Illuminate\Support\Facades\Schema::hasTable('login_logs')) {
+                    array_splice($menu['user'], 1, 0, [[
+                        'title' => '遊戲登入紀錄',
+                        'link'  => 'user/login-logs',
+                        'icon'  => 'fa-history',
+                    ]]);
+                }
                 event(new Events\ConfigureUserMenu($menu));
                 break;
             case 'explore':

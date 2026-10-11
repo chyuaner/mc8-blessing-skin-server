@@ -29,4 +29,12 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+
+    'prometheus' => [
+        'enabled' => env('ENABLE_PROMETHEUS', false),
+        'url' => env('PROMETHEUS_URL', 'http://127.0.0.1:8428'),
+        'job' => env('PROMETHEUS_MC_JOB', 'mc8-mechanomania'),
+        'instance' => env('PROMETHEUS_MC_INSTANCE', '127.0.0.1:19565'),
+    ],
 ];
+

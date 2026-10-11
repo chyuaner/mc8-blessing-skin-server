@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('', 'HomeController@index')->name('home')->middleware('guest.cache');
+Route::get('page/stats', 'StatsController@show')->name('pages.stats');
+Route::get('stats', 'StatsController@show')->name('stats');
+Route::get('api/stats/summary', 'StatsController@summary')->name('api.stats.summary');
+Route::get('api/stats/history', 'StatsController@history')->name('api.stats.history');
 Route::get('page/{slug}', 'HomeController@page')->name('page')->where('slug', '[a-zA-Z0-9_\-\/]+')->middleware('guest.cache');
 Route::get('pages/{slug}', 'HomeController@page')->name('pages')->where('slug', '[a-zA-Z0-9_\-\/]+')->middleware('guest.cache');
 

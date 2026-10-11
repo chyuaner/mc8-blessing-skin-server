@@ -1,0 +1,669 @@
+{% extends 'front.base' %}
+
+{% block title %}伺服器效能狀況 - {{ site_name }}{% endblock %}
+
+{% block style %}
+<style>
+  /* 基礎 Bootstrap 4 圖表卡片樣式微調 */
+  .chart-container {
+    width: 100%;
+    height: 350px;
+    position: relative;
+  }
+  @media (max-width: 767.98px) {
+    .chart-container {
+      height: 290px;
+    }
+  }
+  .chart-loading-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: opacity 0.2s ease;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- 頂部頁面標題與操作區 (扁平簡潔風格) -->
+  <div class="mb-4">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-2 flex-wrap">
+          <span class="badge badge-secondary mr-2 mb-1">
+            <i class="fas fa-server mr-1"></i> NeoForge 1.21.1
+          </span>
+          <span class="badge badge-success mr-2 mb-1" id="serverStatusBadge">
+            <i class="fas fa-circle mr-1" style="font-size: 0.65rem;"></i>
+            <span id="serverStatusText">檢測中...</span>
+          </span>
+          {% if is_mock %}
+            <span class="badge badge-warning text-dark mb-1">
+              <i class="fas fa-vial mr-1"></i> Mock 測試模式
+            </span>
+          {% endif %}
+        </div>
+        <h1 class="h3 font-weight-bold text-dark mb-2">伺服器效能狀況</h1>
+        <p class="text-muted mb-0">
+          即時公開 Minecraft 核心 Tick 速率 (TPS)、Tick 耗時 (MSPT)、各維度負載與記憶體使用率。
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-right mt-3 mt-lg-0">
+        <div class="text-muted small mb-2">
+          最後更新：<span class="font-weight-bold text-dark" id="lastUpdatedText">--:--:--</span>
+        </div>
+        <div class="d-flex align-items-center justify-content-lg-end">
+          <button class="btn btn-sm btn-outline-secondary mr-2" id="btnManualRefresh">
+            <i class="fas fa-sync-alt mr-1" id="refreshIcon"></i> 刷新
+          </button>
+          <div class="custom-control custom-switch d-inline-block">
+            <input type="checkbox" class="custom-control-input" id="autoRefreshSwitch" checked>
+            <label class="custom-control-label small" for="autoRefreshSwitch">自動輪詢 (30s)</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr class="mt-4 mb-0">
+  </div>
+
+  {% if is_mock %}
+  <div class="alert alert-warning shadow-sm mb-4 d-flex align-items-center border" role="alert">
+    <i class="fas fa-info-circle fa-lg mr-3 text-warning"></i>
+    <div class="small">
+      <strong>本地展示模式提醒：</strong> 當前環境設定為 <code>ENABLE_PROMETHEUS=mock</code>，所有指標與歷史圖表均為模擬產生之展示數據，供前端版型除錯與視覺預覽。
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- 伺服器離線警示 -->
+  <div class="alert alert-danger shadow-sm d-none mb-4 border" id="serverOfflineAlert" role="alert">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-exclamation-triangle fa-lg mr-3"></i>
+      <div>
+        <strong class="d-block">Minecraft 伺服器目前離線或連線逾時</strong>
+        <span class="small">目前無法由 Exporter 採集最新即時狀態，請稍候重試或關注群組維護公告。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 即時 KPI 摘要資訊卡片區 (標準 Bootstrap 4 Cards) -->
+  <div class="row mb-4">
+    <!-- 即時 TPS -->
+    <div class="col-6 col-md-4 col-xl-2 mb-3">
+      <div class="card shadow-sm h-100 border">
+        <div class="card-body p-3">
+          <div class="text-muted small font-weight-bold text-uppercase mb-1">即時 TPS</div>
+          <div class="h3 font-weight-bold mb-1 text-success" id="kpiTps">--</div>
+          <div class="small text-muted" id="kpiTpsSub">滿分 20.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tick 耗時 (MSPT) -->
+    <div class="col-6 col-md-4 col-xl-2 mb-3">
+      <div class="card shadow-sm h-100 border">
+        <div class="card-body p-3">
+          <div class="text-muted small font-weight-bold text-uppercase mb-1">Tick 耗時 (MSPT)</div>
+          <div class="h3 font-weight-bold mb-1 text-info" id="kpiMspt">-- ms</div>
+          <div class="small text-muted">&lt; 50 ms 理想</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JVM 記憶體使用率 (%) -->
+    <div class="col-6 col-md-4 col-xl-2 mb-3">
+      <div class="card shadow-sm h-100 border">
+        <div class="card-body p-3">
+          <div class="text-muted small font-weight-bold text-uppercase mb-1">JVM 記憶體</div>
+          <div class="h3 font-weight-bold mb-1 text-primary" id="kpiMemory">--%</div>
+          <div class="progress my-1" style="height: 6px;">
+            <div class="progress-bar bg-primary" id="kpiMemoryBar" role="progressbar" style="width: 0%;"></div>
+          </div>
+          <div class="small text-muted">Heap 使用率 (%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 在線玩家 -->
+    <div class="col-6 col-md-4 col-xl-2 mb-3">
+      <div class="card shadow-sm h-100 border">
+        <div class="card-body p-3">
+          <div class="text-muted small font-weight-bold text-uppercase mb-1">在線玩家</div>
+          <div class="h3 font-weight-bold mb-1 text-dark" id="kpiPlayers">--</div>
+          <div class="small text-muted">目前連線人數</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 載入區塊 (Chunks) -->
+    <div class="col-6 col-md-4 col-xl-2 mb-3">
+      <div class="card shadow-sm h-100 border">
+        <div class="card-body p-3">
+          <div class="text-muted small font-weight-bold text-uppercase mb-1">載入區塊</div>
+          <div class="h3 font-weight-bold mb-1 text-dark" id="kpiChunks">--</div>
+          <div class="small text-muted">全世界區塊總計</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 活動實體 (Entities) -->
+    <div class="col-6 col-md-4 col-xl-2 mb-3">
+      <div class="card shadow-sm h-100 border">
+        <div class="card-body p-3">
+          <div class="text-muted small font-weight-bold text-uppercase mb-1">活動實體</div>
+          <div class="h3 font-weight-bold mb-1 text-dark" id="kpiEntities">--</div>
+          <div class="small text-muted">生物 / 掉落物總計</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 時間區間切換工具列 -->
+  <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
+    <h5 class="font-weight-bold text-dark mb-2">
+      <i class="fas fa-chart-line mr-1 text-primary"></i> 效能歷史走勢圖表
+    </h5>
+    <div class="btn-group btn-group-sm mb-2" role="group">
+      <button type="button" class="btn btn-outline-secondary active" data-range="1h">1 小時</button>
+      <button type="button" class="btn btn-outline-secondary" data-range="6h">6 小時</button>
+      <button type="button" class="btn btn-outline-secondary" data-range="24h">24 小時</button>
+      <button type="button" class="btn btn-outline-secondary" data-range="7d">7 天</button>
+    </div>
+  </div>
+
+  <!-- 圖表網格區 (標準 Bootstrap 4 Cards) -->
+  <div class="row">
+    <!-- 圖表 1: 核心 TPS 與整體 MSPT 對照 (雙 Y 軸) -->
+    <div class="col-lg-12 mb-4">
+      <div class="card shadow-sm border">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap">
+          <h6 class="m-0 font-weight-bold text-dark">
+            <i class="fas fa-tachometer-alt mr-2 text-info"></i> 核心效能走勢（TPS 與整體 MSPT 對照）
+          </h6>
+          <span class="badge badge-light border text-muted small mt-1 mt-md-0">
+            TPS 滿分 20.0 ｜ MSPT 越低越好（紅虛線為 50ms 掉幀警戒線）
+          </span>
+        </div>
+        <div class="card-body p-2 p-md-3">
+          <div class="chart-container" id="chartTpsMspt">
+            <div class="chart-loading-mask"><div class="spinner-border text-primary spinner-border-sm" role="status"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 圖表 2: 各維度 MSPT 耗時走勢 -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm border">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap">
+          <h6 class="m-0 font-weight-bold text-dark">
+            <i class="fas fa-globe-americas mr-2 text-success"></i> 各維度 Tick 耗時分佈（Dimension MSPT）
+          </h6>
+          <span class="badge badge-light border text-muted small mt-1 mt-md-0">單位：毫秒 (ms)</span>
+        </div>
+        <div class="card-body p-2 p-md-3">
+          <div class="chart-container" id="chartDimensionMspt">
+            <div class="chart-loading-mask"><div class="spinner-border text-primary spinner-border-sm" role="status"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 圖表 3: JVM 堆記憶體使用率走勢 (%) -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm border">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap">
+          <h6 class="m-0 font-weight-bold text-dark">
+            <i class="fas fa-microchip mr-2 text-primary"></i> Java 堆記憶體使用率走勢（JVM Heap Usage %）
+          </h6>
+          <span class="badge badge-light border text-muted small mt-1 mt-md-0">單位：%（展示 GC 回收週期）</span>
+        </div>
+        <div class="card-body p-2 p-md-3">
+          <div class="chart-container" id="chartMemory">
+            <div class="chart-loading-mask"><div class="spinner-border text-primary spinner-border-sm" role="status"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 圖表 4: 實體總數與載入區塊量 -->
+    <div class="col-lg-12 mb-4">
+      <div class="card shadow-sm border">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap">
+          <h6 class="m-0 font-weight-bold text-dark">
+            <i class="fas fa-layer-group mr-2 text-warning"></i> 世界負載規模（活動實體 Entities 與載入區塊 Chunks）
+          </h6>
+          <span class="badge badge-light border text-muted small mt-1 mt-md-0">反映跑圖探險與農場實體聚集</span>
+        </div>
+        <div class="card-body p-2 p-md-3">
+          <div class="chart-container" id="chartLoadScale">
+            <div class="chart-loading-mask"><div class="spinner-border text-primary spinner-border-sm" role="status"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- 引用 Apache ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script>
+  (function () {
+    let currentRange = '1h';
+    let autoRefreshTimer = null;
+    let isFetching = false;
+
+    // ECharts 實例物件
+    let chartTpsMspt = null;
+    let chartDimensionMspt = null;
+    let chartMemory = null;
+    let chartLoadScale = null;
+
+    // 初始化 ECharts 實例
+    function initCharts() {
+      const opts = { renderer: 'canvas' };
+      chartTpsMspt = echarts.init(document.getElementById('chartTpsMspt'), null, opts);
+      chartDimensionMspt = echarts.init(document.getElementById('chartDimensionMspt'), null, opts);
+      chartMemory = echarts.init(document.getElementById('chartMemory'), null, opts);
+      chartLoadScale = echarts.init(document.getElementById('chartLoadScale'), null, opts);
+
+      window.addEventListener('resize', function () {
+        chartTpsMspt && chartTpsMspt.resize();
+        chartDimensionMspt && chartDimensionMspt.resize();
+        chartMemory && chartMemory.resize();
+        chartLoadScale && chartLoadScale.resize();
+      });
+    }
+
+    // 更新即時 KPI 摘要
+    function fetchSummary() {
+      fetch('{{ url("api/stats/summary") }}')
+        .then(res => res.json())
+        .then(data => {
+          if (!data || data.status === 'error') return;
+
+          const m = data.metrics || {};
+          const isOnline = data.server_online;
+
+          // 狀態徽章
+          const statusBadge = document.getElementById('serverStatusBadge');
+          const statusText = document.getElementById('serverStatusText');
+          const offlineAlert = document.getElementById('serverOfflineAlert');
+
+          if (isOnline) {
+            statusBadge.className = 'badge badge-success mr-2 mb-1';
+            statusText.innerText = '運作良好';
+            offlineAlert.classList.add('d-none');
+          } else {
+            statusBadge.className = 'badge badge-danger mr-2 mb-1';
+            statusText.innerText = '伺服器離線';
+            offlineAlert.classList.remove('d-none');
+          }
+
+          // 最後更新時間
+          const now = new Date(data.last_updated || Date.now());
+          document.getElementById('lastUpdatedText').innerText = now.toLocaleTimeString();
+
+          // TPS
+          const tpsEl = document.getElementById('kpiTps');
+          const tpsVal = m.tps !== undefined ? Number(m.tps).toFixed(1) : '--';
+          tpsEl.innerText = tpsVal;
+          if (m.tps >= 19.0) {
+            tpsEl.className = 'h3 font-weight-bold mb-1 text-success';
+          } else if (m.tps >= 15.0) {
+            tpsEl.className = 'h3 font-weight-bold mb-1 text-warning';
+          } else {
+            tpsEl.className = 'h3 font-weight-bold mb-1 text-danger';
+          }
+
+          // MSPT
+          const msptEl = document.getElementById('kpiMspt');
+          const msptVal = m.mspt !== undefined ? Number(m.mspt).toFixed(2) : '--';
+          msptEl.innerText = msptVal + ' ms';
+          if (m.mspt < 40) {
+            msptEl.className = 'h3 font-weight-bold mb-1 text-info';
+          } else if (m.mspt < 50) {
+            msptEl.className = 'h3 font-weight-bold mb-1 text-warning';
+          } else {
+            msptEl.className = 'h3 font-weight-bold mb-1 text-danger';
+          }
+
+          // 記憶體百分比 (以 % 顯示)
+          const memPct = m.heap_percent !== undefined ? Number(m.heap_percent).toFixed(1) : '--';
+          document.getElementById('kpiMemory').innerText = memPct + '%';
+          const memBar = document.getElementById('kpiMemoryBar');
+          if (m.heap_percent !== undefined) {
+            const pct = Math.min(100, Math.max(0, m.heap_percent));
+            memBar.style.width = pct + '%';
+            if (pct >= 90) {
+              memBar.className = 'progress-bar bg-danger';
+            } else if (pct >= 75) {
+              memBar.className = 'progress-bar bg-warning';
+            } else {
+              memBar.className = 'progress-bar bg-primary';
+            }
+          }
+
+          // 玩家、區塊、實體
+          document.getElementById('kpiPlayers').innerText = m.players_online !== undefined ? m.players_online : '--';
+          document.getElementById('kpiChunks').innerText = m.chunks_loaded !== undefined ? m.chunks_loaded.toLocaleString() : '--';
+          document.getElementById('kpiEntities').innerText = m.entities_total !== undefined ? m.entities_total.toLocaleString() : '--';
+        })
+        .catch(err => {
+          console.error('Failed to fetch summary:', err);
+        });
+    }
+
+    // 取得歷史時間序列並渲染圖表
+    function fetchHistory() {
+      if (isFetching) return;
+      isFetching = true;
+
+      // 顯示 loading 遮罩
+      document.querySelectorAll('.chart-loading-mask').forEach(el => el.style.opacity = '1');
+
+      fetch(`{{ url("api/stats/history") }}?range=${currentRange}`)
+        .then(res => res.json())
+        .then(data => {
+          renderCharts(data);
+        })
+        .catch(err => {
+          console.error('Failed to fetch history:', err);
+        })
+        .finally(() => {
+          isFetching = false;
+          document.querySelectorAll('.chart-loading-mask').forEach(el => el.style.opacity = '0');
+        });
+    }
+
+    // 渲染四大圖表
+    function renderCharts(data) {
+      if (!data) return;
+
+      const timeFormat = (val) => {
+        const d = new Date(val);
+        const hours = String(d.getHours()).padStart(2, '0');
+        const mins = String(d.getMinutes()).padStart(2, '0');
+        if (currentRange === '24h' || currentRange === '7d') {
+          return `${d.getMonth() + 1}/${d.getDate()} ${hours}:${mins}`;
+        }
+        return `${hours}:${mins}`;
+      };
+
+      // 共通 Tooltip 與軸樣式
+      const commonAxis = {
+        type: 'time',
+        boundaryGap: false,
+        axisLine: { lineStyle: { color: '#ced4da' } },
+        axisLabel: {
+          color: '#6c757d',
+          formatter: timeFormat
+        },
+        splitLine: { show: true, lineStyle: { color: '#e9ecef' } }
+      };
+
+      // --- 圖表 1: TPS 與 MSPT 雙軸走勢 ---
+      const tpsPoints = data.tps || [];
+      const msptPoints = data.mspt || [];
+
+      chartTpsMspt.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'cross' }
+        },
+        legend: {
+          data: ['TPS (左軸)', 'MSPT (右軸)'],
+          top: 0
+        },
+        grid: { left: '3%', right: '4%', bottom: '5%', top: '40px', containLabel: true },
+        xAxis: commonAxis,
+        yAxis: [
+          {
+            type: 'value',
+            name: 'TPS',
+            min: 0,
+            max: 20,
+            interval: 5,
+            axisLabel: { formatter: '{value}' },
+            splitLine: { show: true, lineStyle: { color: '#e9ecef' } }
+          },
+          {
+            type: 'value',
+            name: 'MSPT (ms)',
+            min: 0,
+            axisLabel: { formatter: '{value} ms' },
+            splitLine: { show: false }
+          }
+        ],
+        series: [
+          {
+            name: 'TPS (左軸)',
+            type: 'line',
+            yAxisIndex: 0,
+            data: tpsPoints,
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 2.2, color: '#28a745' },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(40, 167, 69, 0.25)' },
+                { offset: 1, color: 'rgba(40, 167, 69, 0.02)' }
+              ])
+            }
+          },
+          {
+            name: 'MSPT (右軸)',
+            type: 'line',
+            yAxisIndex: 1,
+            data: msptPoints,
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 2, color: '#17a2b8' },
+            markLine: {
+              symbol: 'none',
+              data: [
+                {
+                  yAxis: 50,
+                  name: '50ms 臨界線',
+                  lineStyle: { color: '#dc3545', type: 'dashed', width: 1.5 },
+                  label: { formatter: '50ms 臨界點', position: 'end', color: '#dc3545' }
+                }
+              ]
+            }
+          }
+        ]
+      });
+
+      // --- 圖表 2: 各維度 MSPT ---
+      const dimSeriesList = (data.dimension_mspt || []).map((s, idx) => {
+        const colors = ['#28a745', '#fd7e14', '#6f42c1', '#dc3545', '#007bff', '#e83e8c'];
+        const col = colors[idx % colors.length];
+        return {
+          name: s.name,
+          type: 'line',
+          data: s.points || [],
+          showSymbol: false,
+          smooth: true,
+          lineStyle: { width: 1.8, color: col }
+        };
+      });
+
+      chartDimensionMspt.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'line' },
+          valueFormatter: val => (val !== undefined ? `${val} ms` : '--')
+        },
+        legend: {
+          type: 'scroll',
+          top: 0
+        },
+        grid: { left: '3%', right: '4%', bottom: '5%', top: '40px', containLabel: true },
+        xAxis: commonAxis,
+        yAxis: {
+          type: 'value',
+          name: 'ms',
+          splitLine: { show: true, lineStyle: { color: '#e9ecef' } }
+        },
+        series: dimSeriesList
+      });
+
+      // --- 圖表 3: JVM 堆記憶體使用率走勢 (純百分比 %) ---
+      const heapPercent = data.heap_percent || [];
+
+      chartMemory.setOption({
+        tooltip: {
+          trigger: 'axis',
+          valueFormatter: val => (val !== undefined ? `${val} %` : '--')
+        },
+        legend: {
+          data: ['記憶體使用率 (%)'],
+          top: 0
+        },
+        grid: { left: '3%', right: '4%', bottom: '5%', top: '40px', containLabel: true },
+        xAxis: commonAxis,
+        yAxis: {
+          type: 'value',
+          name: '使用率 (%)',
+          min: 0,
+          max: 100,
+          interval: 20,
+          axisLabel: { formatter: '{value} %' },
+          splitLine: { show: true, lineStyle: { color: '#e9ecef' } }
+        },
+        series: [
+          {
+            name: '記憶體使用率 (%)',
+            type: 'line',
+            data: heapPercent,
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 2, color: '#007bff' },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(0, 123, 255, 0.25)' },
+                { offset: 1, color: 'rgba(0, 123, 255, 0.02)' }
+              ])
+            }
+          }
+        ]
+      });
+
+      // --- 圖表 4: 實體總數與載入區塊 ---
+      const entities = data.entities || [];
+      const chunks = data.chunks || [];
+
+      chartLoadScale.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'cross' }
+        },
+        legend: {
+          data: ['活動實體 (Entities)', '載入區塊 (Chunks)'],
+          top: 0
+        },
+        grid: { left: '3%', right: '4%', bottom: '5%', top: '40px', containLabel: true },
+        xAxis: commonAxis,
+        yAxis: [
+          {
+            type: 'value',
+            name: '實體 (Entities)',
+            splitLine: { show: true, lineStyle: { color: '#e9ecef' } }
+          },
+          {
+            type: 'value',
+            name: '區塊 (Chunks)',
+            splitLine: { show: false }
+          }
+        ],
+        series: [
+          {
+            name: '活動實體 (Entities)',
+            type: 'line',
+            yAxisIndex: 0,
+            data: entities,
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 2, color: '#fd7e14' },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(253, 126, 20, 0.2)' },
+                { offset: 1, color: 'rgba(253, 126, 20, 0.02)' }
+              ])
+            }
+          },
+          {
+            name: '載入區塊 (Chunks)',
+            type: 'line',
+            yAxisIndex: 1,
+            data: chunks,
+            showSymbol: false,
+            smooth: true,
+            lineStyle: { width: 2, color: '#6f42c1' }
+          }
+        ]
+      });
+    }
+
+    // 初始化事件綁定
+    function initEvents() {
+      // 範圍按鈕點擊切換
+      document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentRange = this.getAttribute('data-range');
+          fetchHistory();
+        });
+      });
+
+      // 手動刷新按鈕
+      const refreshBtn = document.getElementById('btnManualRefresh');
+      const refreshIcon = document.getElementById('refreshIcon');
+      refreshBtn.addEventListener('click', function () {
+        refreshIcon.classList.add('fa-spin');
+        fetchSummary();
+        fetchHistory();
+        setTimeout(() => refreshIcon.classList.remove('fa-spin'), 1000);
+      });
+
+      // 自動輪詢開關
+      const autoSwitch = document.getElementById('autoRefreshSwitch');
+      function resetAutoRefresh() {
+        if (autoRefreshTimer) {
+          clearInterval(autoRefreshTimer);
+          autoRefreshTimer = null;
+        }
+        if (autoSwitch.checked) {
+          autoRefreshTimer = setInterval(() => {
+            fetchSummary();
+            fetchHistory();
+          }, 30000);
+        }
+      }
+      autoSwitch.addEventListener('change', resetAutoRefresh);
+      resetAutoRefresh();
+    }
+
+    // DOM Ready 啟動
+    document.addEventListener('DOMContentLoaded', function () {
+      initCharts();
+      initEvents();
+      fetchSummary();
+      fetchHistory();
+    });
+  })();
+</script>
+{% endblock %}

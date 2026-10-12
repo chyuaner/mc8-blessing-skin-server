@@ -15,7 +15,7 @@ class StatsController extends Controller
         'overworld' => '主世界 (Overworld)',
         'the_nether' => '地獄 (The Nether)',
         'the_end' => '終界 (The End)',
-        'twilight_forest' => '暮光森林 (Twilight Forest)',
+        'twilight_forest' => '暮色森林 (Twilight Forest)',
         'pocket_dimension' => '口袋維度 (Pocket Dimension)',
         'the_retreat' => '避難所 (The Retreat)',
     ];
@@ -75,7 +75,7 @@ class StatsController extends Controller
     }
 
     /**
-     * 取得歷史時間序列數據 (以 range 劃分)
+     * 取得歷史時間序列數據 (支援預設 range 或自訂 start/end 區間)
      */
     public function history(Request $request)
     {
@@ -84,25 +84,74 @@ class StatsController extends Controller
             abort(404);
         }
 
-        $range = $request->query('range', '1h');
         $rangeMap = [
+            '10m' => ['seconds' => 600,    'step' => '5s'],
+            '30m' => ['seconds' => 1800,   'step' => '15s'],
             '1h'  => ['seconds' => 3600,   'step' => '30s'],
             '6h'  => ['seconds' => 21600,  'step' => '120s'],
             '24h' => ['seconds' => 86400,  'step' => '600s'],
             '7d'  => ['seconds' => 604800, 'step' => '3600s'],
         ];
 
+        // 檢查是否有傳入自訂 start / end (可為 Unix 秒數或日期字串)
+        $startParam = $request->query('start');
+        $endParam = $request->query('end');
+
+        if ($startParam && $endParam) {
+            $start = is_numeric($startParam) ? (int) $startParam : strtotime($startParam);
+            $end = is_numeric($endParam) ? (int) $endParam : strtotime($endParam);
+
+            if ($start && $end && $start < $end) {
+                // 限制最長 30 天，最短 30 秒
+                $diff = $end - $start;
+                $diff = max(30, min(86400 * 30, $diff));
+                $end = $start + $diff;
+
+                // 根據時間跨度自適應採樣步長 (步長約維持 60 ~ 150 點，兼顧精確度與載入速度)
+                $step = match (true) {
+                    $diff <= 900    => '5s',    // <= 15 分鐘：5秒步長
+                    $diff <= 3600   => '15s',   // <= 1 小時：15秒步長
+                    $diff <= 21600  => '60s',   // <= 6 小時：1分鐘步長
+                    $diff <= 86400  => '300s',  // <= 24 小時：5分鐘步長
+                    $diff <= 604800 => '1800s', // <= 7 天：30分鐘步長
+                    default         => '3600s', // > 7 天：1小時步長
+                };
+
+                $config = ['start' => $start, 'end' => $end, 'step' => $step];
+
+                if ($mode === 'mock') {
+                    return response()->json($this->generateMockHistory('custom', $config));
+                }
+
+                $cacheKey = "mc_stats_history_custom_{$start}_{$end}_{$step}";
+                $data = Cache::remember($cacheKey, 30, function () use ($config) {
+                    return $this->fetchLiveHistory($config);
+                });
+
+                return response()->json($data);
+            }
+        }
+
+        $range = $request->query('range', '1h');
         if (!isset($rangeMap[$range])) {
             $range = '1h';
         }
 
+        $end = time();
+        $start = $end - $rangeMap[$range]['seconds'];
+        $config = [
+            'start' => $start,
+            'end'   => $end,
+            'step'  => $rangeMap[$range]['step'],
+        ];
+
         if ($mode === 'mock') {
-            return response()->json($this->generateMockHistory($range, $rangeMap[$range]));
+            return response()->json($this->generateMockHistory($range, $config));
         }
 
         $cacheKey = "mc_stats_history_{$range}";
-        $data = Cache::remember($cacheKey, 30, function () use ($range, $rangeMap) {
-            return $this->fetchLiveHistory($rangeMap[$range]);
+        $data = Cache::remember($cacheKey, 30, function () use ($config) {
+            return $this->fetchLiveHistory($config);
         });
 
         return response()->json($data);
@@ -152,6 +201,7 @@ class StatsController extends Controller
                     'tps' => 0.0,
                     'mspt' => 0.0,
                     'players_online' => 0,
+                    'player_names' => [],
                     'chunks_loaded' => 0,
                     'entities_total' => 0,
                     'heap_percent' => 0.0,
@@ -171,7 +221,21 @@ class StatsController extends Controller
 
         $tps = $extractScalar($this->queryPrometheusInstant("clamp_max(rate(mc_server_tick_seconds_count{$selector}[1m]), 20)"), 20.0);
         $mspt = $extractScalar($this->queryPrometheusInstant("rate(mc_server_tick_seconds_sum{$selector}[1m]) / rate(mc_server_tick_seconds_count{$selector}[1m]) * 1000"), 0.0);
-        $players = (int) $extractScalar($this->queryPrometheusInstant("sum(mc_entities_total{job=\"{$job}\", type=\"Player\"}) or vector(0)"), 0);
+        
+        // 線上玩家：使用 mc_player_list 取得精確在線人數與玩家名單
+        $playerListResults = $this->queryPrometheusInstant("mc_player_list{$selector}") ?: [];
+        $players = count($playerListResults);
+        $playerNames = [];
+        foreach ($playerListResults as $item) {
+            if (!empty($item['metric']['name'])) {
+                $playerNames[] = $item['metric']['name'];
+            }
+        }
+        // 若 mc_player_list 暫無資料但可能有其他格式，嘗試 fallback 到實體統計
+        if ($players === 0) {
+            $players = (int) $extractScalar($this->queryPrometheusInstant("sum(mc_entities_total{job=\"{$job}\", type=\"Player\"}) or vector(0)"), 0);
+        }
+
         $chunks = (int) $extractScalar($this->queryPrometheusInstant("sum(mc_dimension_chunks_loaded{$selector}) or vector(0)"), 0);
         $entities = (int) $extractScalar($this->queryPrometheusInstant("sum(mc_entities_total{$selector}) or vector(0)"), 0);
         // 安全起見，僅計算百分比，不外洩實體記憶體配置容量大小
@@ -211,6 +275,7 @@ class StatsController extends Controller
                 'tps' => round($tps, 2),
                 'mspt' => round($mspt, 2),
                 'players_online' => $players,
+                'player_names' => $playerNames,
                 'chunks_loaded' => $chunks,
                 'entities_total' => $entities,
                 'heap_percent' => round($heapPercent, 1),
@@ -229,8 +294,8 @@ class StatsController extends Controller
         $job = config('services.prometheus.job', 'mc8-mechanomania');
         $selector = "{job=\"{$job}\"}";
 
-        $end = time();
-        $start = $end - $config['seconds'];
+        $start = $config['start'];
+        $end = $config['end'];
         $step = $config['step'];
 
         $queryRange = function (string $query) use ($baseUrl, $start, $end, $step) {
@@ -257,7 +322,8 @@ class StatsController extends Controller
         $heapPercentData = $queryRange("jvm_memory_bytes_used{job=\"{$job}\", area=\"heap\"} / jvm_memory_bytes_max{job=\"{$job}\", area=\"heap\"} * 100");
         $entitiesData = $queryRange("sum(mc_entities_total{$selector})");
         $chunksData = $queryRange("sum(mc_dimension_chunks_loaded{$selector})");
-        $playersData = $queryRange("sum(mc_entities_total{job=\"{$job}\", type=\"Player\"}) or vector(0)");
+        // 線上人數：使用 sum(mc_player_list) or vector(0)
+        $playersData = $queryRange("sum(mc_player_list{$selector}) or vector(0)");
 
         $formatSeries = function (array $result, ?string $defaultName = null, ?\Closure $labelMapper = null) {
             $seriesList = [];
@@ -290,13 +356,14 @@ class StatsController extends Controller
             'is_mock' => false,
             'start' => $start * 1000,
             'end' => $end * 1000,
+            'step' => $step,
             'tps' => $formatSeries($tpsData, 'TPS')[0]['points'] ?? [],
             'mspt' => $formatSeries($msptData, 'MSPT')[0]['points'] ?? [],
             'dimension_mspt' => $dimSeries,
             'heap_percent' => $formatSeries($heapPercentData, '記憶體使用率 (%)')[0]['points'] ?? [],
             'entities' => $formatSeries($entitiesData, '實體數量')[0]['points'] ?? [],
             'chunks' => $formatSeries($chunksData, '載入區塊數')[0]['points'] ?? [],
-            'players' => $formatSeries($playersData, '在線玩家數')[0]['points'] ?? [],
+            'players' => $formatSeries($playersData, '線上人數')[0]['points'] ?? [],
         ];
     }
 
@@ -314,6 +381,7 @@ class StatsController extends Controller
                 'tps' => 20.0,
                 'mspt' => 2.45,
                 'players_online' => 3,
+                'player_names' => ['chyuaner', 'Alex', 'Steve'],
                 'chunks_loaded' => 156,
                 'entities_total' => 342,
                 'heap_percent' => 41.5,
@@ -322,7 +390,7 @@ class StatsController extends Controller
                     ['name' => 'overworld', 'label' => '主世界 (Overworld)', 'mspt' => 1.85, 'chunks' => 82],
                     ['name' => 'the_nether', 'label' => '地獄 (The Nether)', 'mspt' => 0.28, 'chunks' => 28],
                     ['name' => 'the_end', 'label' => '終界 (The End)', 'mspt' => 0.12, 'chunks' => 16],
-                    ['name' => 'twilight_forest', 'label' => '暮光森林 (Twilight Forest)', 'mspt' => 0.65, 'chunks' => 30],
+                    ['name' => 'twilight_forest', 'label' => '暮色森林 (Twilight Forest)', 'mspt' => 0.65, 'chunks' => 30],
                 ],
             ],
         ];
@@ -333,14 +401,18 @@ class StatsController extends Controller
      */
     protected function generateMockHistory(string $range, array $config): array
     {
-        $end = time();
-        $start = $end - $config['seconds'];
+        $start = $config['start'];
+        $end = $config['end'];
+        $duration = max(30, $end - $start);
+
         $stepSeconds = match ($range) {
+            '10m' => 5,
+            '30m' => 15,
             '1h'  => 30,
             '6h'  => 120,
             '24h' => 600,
             '7d'  => 3600,
-            default => 60,
+            default => max(5, (int) ($duration / 120)),
         };
 
         $tps = [];
@@ -358,7 +430,7 @@ class StatsController extends Controller
 
         for ($t = $start; $t <= $end; $t += $stepSeconds) {
             $ts = $t * 1000;
-            $progress = ($t - $start) / max(1, $config['seconds']);
+            $progress = ($t - $start) / $duration;
 
             // TPS: 基本上 20.0，微小抖動
             $tpsVal = 20.0 - (sin($t / 200) > 0.85 ? rand(1, 4) * 0.1 : 0);
@@ -392,11 +464,12 @@ class StatsController extends Controller
             'is_mock' => true,
             'start' => $start * 1000,
             'end' => $end * 1000,
+            'step' => $config['step'],
             'tps' => $tps,
             'mspt' => $mspt,
             'dimension_mspt' => [
                 ['name' => '主世界 (Overworld)', 'points' => $dimOverworld],
-                ['name' => '暮光森林 (Twilight Forest)', 'points' => $dimTwilight],
+                ['name' => '暮色森林 (Twilight Forest)', 'points' => $dimTwilight],
                 ['name' => '地獄 (The Nether)', 'points' => $dimNether],
                 ['name' => '終界 (The End)', 'points' => $dimEnd],
             ],

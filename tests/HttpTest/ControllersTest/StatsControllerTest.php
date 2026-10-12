@@ -57,6 +57,22 @@ class StatsControllerTest extends TestCase
                 'players',
             ]);
 
+        // 測試 10m 與 30m 範圍
+        $this->get('/api/stats/history?range=10m')
+            ->assertStatus(200)
+            ->assertJson(['status' => 'success']);
+
+        $this->get('/api/stats/history?range=30m')
+            ->assertStatus(200)
+            ->assertJson(['status' => 'success']);
+
+        // 測試自訂時間區間 (例如查詢過去 10 分鐘)
+        $now = time();
+        $start = $now - 600;
+        $this->get("/api/stats/history?start={$start}&end={$now}")
+            ->assertStatus(200)
+            ->assertJson(['status' => 'success', 'is_mock' => true]);
+
         // 確保沒有洩漏實體記憶體大小的欄位
         $response = $this->get('/api/stats/summary');
         $response->assertJsonMissing(['heap_used_bytes', 'heap_max_bytes']);
